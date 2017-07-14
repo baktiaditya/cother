@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as _ from 'lodash';
 
-class FrameContent extends React.Component {
+class IframeContent extends React.Component {
   static propTypes = {
-    extractedScript: PropTypes.array,
+    extractedScripts: PropTypes.array,
     loadExternalScripts: PropTypes.array
   };
 
@@ -13,7 +13,7 @@ class FrameContent extends React.Component {
     document: PropTypes.any
   };
 
-  _temp = [];
+  _scripts = [];
 
   componentDidMount() {
     if (!_.isEmpty(this.props.loadExternalScripts)) {
@@ -24,29 +24,29 @@ class FrameContent extends React.Component {
   }
 
   componentWillUpdate() {
-    if (!_.isEmpty(this._temp)) {
-      this._temp.forEach((dom) => dom.parentNode.removeChild(dom));
-      this._temp = [];
+    if (!_.isEmpty(this._scripts)) {
+      this._scripts.forEach((dom) => dom.parentNode.removeChild(dom));
+      this._scripts = [];
     }
   }
 
   componentDidUpdate() {
-    if (!_.isEmpty(this.props.extractedScript)) {
+    if (!_.isEmpty(this.props.extractedScripts)) {
       const {
         document: iFrameDocument
       } = this.context;
 
-      for (let i = 0; i < this.props.extractedScript.length; i++) {
+      for (let i = 0; i < this.props.extractedScripts.length; i++) {
         const s = iFrameDocument.createElement('script');
         s.type = 'text/javascript';
         try {
-          s.appendChild(iFrameDocument.createTextNode(this.props.extractedScript[i]));
+          s.appendChild(iFrameDocument.createTextNode(this.props.extractedScripts[i]));
           iFrameDocument.body.appendChild(s);
         } catch (e) {
-          s.text = this.props.extractedScript[i];
+          s.text = this.props.extractedScripts[i];
           iFrameDocument.body.appendChild(s);
         }
-        this._temp.push(s);
+        this._scripts.push(s);
       }
     }
   }
@@ -73,7 +73,7 @@ class FrameContent extends React.Component {
   render() {
     const {
       ...props
-    } = _.omit(this.props, ['extractedScript', 'loadExternalScripts']);
+    } = _.omit(this.props, ['extractedScripts', 'loadExternalScripts']);
 
     return (
       <div {...props} />
@@ -81,4 +81,4 @@ class FrameContent extends React.Component {
   }
 }
 
-export default FrameContent;
+export { IframeContent };

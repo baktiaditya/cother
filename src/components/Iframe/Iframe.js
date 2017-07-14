@@ -23,7 +23,7 @@ if (hasConsole) {
   resetWarnings = () => (console.error = originalError);  // eslint-disable-line no-console
 }
 
-export default class Frame extends Component {
+class Iframe extends Component {
   // React warns when you render directly into the body since browser extensions
   // also inject into the body and can mess up React. For this reason
   // initialContent is expected to have a div inside of the body
@@ -140,3 +140,6 @@ export default class Frame extends Component {
     );
   }
 }
+
+export default Iframe;
+export { IframeContent } from './IframeContent';

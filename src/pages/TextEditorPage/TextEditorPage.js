@@ -1,84 +1,56 @@
 /* eslint no-console:0, no-eval:0, no-param-reassign:0 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
 import { Link } from 'react-router';
+import classNames from 'classnames/bind';
+
 import { firebaseDb } from '../../firebase';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../constants';
-import Iframe from '../../components/Iframe/Iframe';
-import FrameContent from './FrameContent';
 import scss from './TextEditorPage.mod.scss';
+
+// Components
+import Base from '../../components/Base/Base';
+import Iframe, { IframeContent } from '../../components/Iframe/Iframe';
 
 class TextEditorPage extends React.Component {
   static propTypes = {
     params: PropTypes.object
   }
 
+  _externalScriptList = {
+    jquery: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js'
+  };
   _firepad;
-  _firepadDom;
-  _firepadHeadless;
-  _firepadRef = firebaseDb.ref(this.props.params.action);
+  _firepadRef = firebaseDb.ref(`${this.props.params.action}_html`);
 
   state = {
     html: '',
-    extractedScript: []
+    extractedScripts: [],
+    externalScripts: [
+      this._externalScriptList.jquery
+    ]
   }
 
   componentDidMount() {
     // Page title
     document.getElementsByTagName('title')[0].innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} ${this.props.params.action}`;
 
-    const firePadDom = ReactDOM.findDOMNode(this._firepadDom);
-    const codeMirror = window.CodeMirror(firePadDom, {
-      extraKeys: {
-        // https://github.com/codemirror/CodeMirror/issues/988
-        Tab: (cm) => {
-          if (cm.somethingSelected()) {
-            cm.indentSelection('add');
-          } else {
-            cm.replaceSelection(cm.getOption('indentWithTabs') ? '\t' :
-              new Array(cm.getOption('indentUnit') + 1).join(' '), 'end', '+input');
-          }
-        }
-      },
-      lineNumbers: true,
-      lineWrapping: true,
-      autoCloseTags: true,
-      mode: 'htmlmixed',
-      theme: 'tomorrow-night'
+    const editor = window.ace.edit('html');
+    editor.setTheme('ace/theme/tomorrow_night');
+    editor.getSession().setMode('ace/mode/html');
+    editor.getSession().setTabSize(2);
+    editor.getSession().setUseWrapMode(true);
+    editor.setShowInvisibles(false);
+    editor.on('change', () => {
+      const code = editor.getValue();
+      this.updateIframe(code);
     });
 
-    const charWidth = codeMirror.defaultCharWidth();
-    const basePadding = 4;
-    codeMirror.on('renderLine', (cm, line, elt) => {
-      const off = window.CodeMirror.countColumn(line.text, null, cm.getOption('tabSize')) * charWidth;
-      elt.style.textIndent = `-${off}px`;
-      elt.style.paddingLeft = `${basePadding + off}px`;
-    });
-    codeMirror.refresh();
-
-    this._firepad = window.Firepad.fromCodeMirror(this._firepadRef, codeMirror, {
-      // richTextShortcuts: true,
-      // richTextToolbar: true,
-      defaultText: '// Code'
-    });
-
-    this._firepad.on('ready', () => {
-      // this.firepadUpdate();
-
-      this._firepadHeadless = new window.Firepad.Headless(this._firepadRef);
-      this._firepadHeadless.firebaseAdapter_.on('operation', () => {
-        this.firepadUpdate();
-      });
-    });
+    this._firepad = window.Firepad.fromACE(this._firepadRef, editor);
   }
 
   componentWillUnmount() {
-    this._firepad.off('ready');
-    this._firepad.off('synced');
-    // this._firepadRef.off('child_changed');
-    this._firepadHeadless.firebaseAdapter_.off('operation');
-    this._firepad = undefined;
+    this._firepad.dispose();
   }
 
   extractScript(s) {
@@ -93,46 +65,46 @@ class TextEditorPage extends React.Component {
     return scriptsArr;
   }
 
-  firepadUpdate() {
-    if (!this._firepad) { return false; }
-
-    const txt = this._firepad.getText();
-    const extractedScript = this.extractScript(txt);
+  updateIframe(code) {
+    const extractedScripts = this.extractScript(code);
 
     this.setState({
-      html: txt,
-      extractedScript
+      html: code,
+      extractedScripts
     });
   }
 
   render() {
+    const cx = classNames.bind(scss);
+
     return (
-      <div>
-        <div className={scss['header']}>
+      <Base>
+        <div className={cx('header')}>
           <h3>Text Editor Page</h3>
           <Link to='/' className={scss['link']}>Home</Link>
         </div>
 
-        <div>
-          <div className={scss['column']}>
-            <div ref={c => (this._firepadDom = c)} />
+        <div className={cx('row')}>
+          <div className={cx('column')}>
+            <div className={cx('editor-type')}>
+              <span>HTML</span>
+            </div>
+            <div id='html' className={cx('editor-container')} />
           </div>
-          <div className={scss['column']}>
+          <div className={cx('column')}>
             <Iframe
               frameBorder={0}
-              className={scss['iframe']}
+              className={cx('iframe')}
             >
-              <FrameContent
-                loadExternalScripts={[
-                  'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js'
-                ]}
-                extractedScript={this.state.extractedScript}
+              <IframeContent
+                loadExternalScripts={this.state.externalScripts}
+                extractedScripts={this.state.extractedScripts}
                 dangerouslySetInnerHTML={{ __html: this.state.html }}
               />
             </Iframe>
           </div>
         </div>
-      </div>
+      </Base>
     );
   }
 }

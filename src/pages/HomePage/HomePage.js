@@ -5,6 +5,9 @@ import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../constants';
 import { generateRandomString } from '../../utils';
 import scss from './HomePage.mod.scss';
 
+// Components
+import Base from '../../components/Base/Base';
+
 class HomePage extends React.Component {
   componentDidMount() {
     // Page title
@@ -13,9 +16,11 @@ class HomePage extends React.Component {
 
   render() {
     return (
-      <div className={scss['header']}>
-        <Link to={`/${generateRandomString(20)}`}>Create New</Link>
-      </div>
+      <Base>
+        <div className={scss['header']}>
+          <Link to={`/${generateRandomString(20)}`}>Create New</Link>
+        </div>
+      </Base>
     );
   }
 }

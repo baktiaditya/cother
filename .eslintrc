@@ -25,6 +25,7 @@
     "import/no-extraneous-dependencies": "off",
     "import/prefer-default-export": "off",
     "jsx-quotes": ["error", "prefer-single"],
+    "jsx-a11y/iframe-has-title": "off",
     "no-console": "off",
     "no-use-before-define": "off",
     "no-multi-assign": "off",

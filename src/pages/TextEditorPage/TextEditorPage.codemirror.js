@@ -1,13 +1,12 @@
-/* eslint no-console:0, no-eval:0 */
+/* eslint no-console:0, no-eval:0, no-param-reassign:0 */
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router';
-// import ReactFrame from 'react-frame-component';
 import { firebaseDb } from '../../firebase';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../constants';
 import Iframe from '../../components/Iframe/Iframe';
-import FrameContent from './FrameContent';
+import FrameContent from '../../components/Iframe/IframeContent';
 import scss from './TextEditorPage.mod.scss';
 
 class TextEditorPage extends React.Component {
@@ -17,18 +16,12 @@ class TextEditorPage extends React.Component {
 
   _firepad;
   _firepadDom;
-  // _firepadHeadless;
+  _firepadHeadless;
   _firepadRef = firebaseDb.ref(this.props.params.action);
 
   state = {
     html: '',
     extractedScript: []
-  }
-
-  componentWillMount() {
-    this._firepadRef.on('child_changed', (snapshot) => {
-      this.firepadUpdate();
-    });
   }
 
   componentDidMount() {
@@ -37,48 +30,55 @@ class TextEditorPage extends React.Component {
 
     const firePadDom = ReactDOM.findDOMNode(this._firepadDom);
     const codeMirror = window.CodeMirror(firePadDom, {
-      // lineWrapping: true,
-      extraKeys: { Tab: this.betterTab },
+      extraKeys: {
+        // https://github.com/codemirror/CodeMirror/issues/988
+        Tab: (cm) => {
+          if (cm.somethingSelected()) {
+            cm.indentSelection('add');
+          } else {
+            cm.replaceSelection(cm.getOption('indentWithTabs') ? '\t' :
+              new Array(cm.getOption('indentUnit') + 1).join(' '), 'end', '+input');
+          }
+        }
+      },
       lineNumbers: true,
+      lineWrapping: true,
       autoCloseTags: true,
-      mode: 'htmlmixed'
+      mode: 'htmlmixed',
+      theme: 'tomorrow-night'
     });
 
+    const charWidth = codeMirror.defaultCharWidth();
+    const basePadding = 4;
+    codeMirror.on('renderLine', (cm, line, elt) => {
+      const off = window.CodeMirror.countColumn(line.text, null, cm.getOption('tabSize')) * charWidth;
+      elt.style.textIndent = `-${off}px`;
+      elt.style.paddingLeft = `${basePadding + off}px`;
+    });
+    codeMirror.refresh();
+
     this._firepad = window.Firepad.fromCodeMirror(this._firepadRef, codeMirror, {
-      richTextShortcuts: true,
+      // richTextShortcuts: true,
       // richTextToolbar: true,
-      defaultText: '// CSS Editing'
+      defaultText: '// Code'
     });
 
     this._firepad.on('ready', () => {
-      this.firepadUpdate();
+      // this.firepadUpdate();
 
-      // this._firepadRef.on('child_changed', (snapshot) => {
-      //   // console.log('ewe');
-      //   this.firepadUpdate();
-      // });
-
-      // this._firepadHeadless = new window.Firepad.Headless(this._firepadRef);
-      // this._firepadHeadless.firebaseAdapter_.on('operation', () => {
-      //   this.firepadUpdate();
-      // });
-
-      // this._firepad.firebaseAdapter_.on('operation', () => {
-      //   this.firepadUpdate();
-      // });
+      this._firepadHeadless = new window.Firepad.Headless(this._firepadRef);
+      this._firepadHeadless.firebaseAdapter_.on('operation', () => {
+        this.firepadUpdate();
+      });
     });
-
-    // this._firepad.on('synced', () => {
-    //   this.firepadUpdate();
-    // });
   }
 
   componentWillUnmount() {
     this._firepad.off('ready');
     this._firepad.off('synced');
-    this._firepadRef.off('child_changed');
+    // this._firepadRef.off('child_changed');
+    this._firepadHeadless.firebaseAdapter_.off('operation');
     this._firepad = undefined;
-    // this._firepadHeadless.firebaseAdapter_.off('operation');
   }
 
   extractScript(s) {
@@ -91,15 +91,6 @@ class TextEditorPage extends React.Component {
     }
 
     return scriptsArr;
-  }
-
-  betterTab(cm) {
-    if (cm.somethingSelected()) {
-      cm.indentSelection('add');
-    } else {
-      cm.replaceSelection(cm.getOption('indentWithTabs') ? '\t' :
-        new Array(cm.getOption('indentUnit') + 1).join(' '), 'end', '+input');
-    }
   }
 
   firepadUpdate() {
@@ -117,9 +108,9 @@ class TextEditorPage extends React.Component {
   render() {
     return (
       <div>
-        <div>
-          <h3>TextEditorPage</h3>
-          <Link to='/' className={scss['back-btn']}>back</Link>
+        <div className={scss['header']}>
+          <h3>Text Editor Page</h3>
+          <Link to='/' className={scss['link']}>Home</Link>
         </div>
 
         <div>
