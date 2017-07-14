@@ -8,7 +8,7 @@ const firebaseConfig = require('./firebase.config');
 
 // Configuration settings
 const config = {
-  title: 'TVLK UIDev Text Editor', // Website title
+  title: 'Cother &mdash; Collaborative Text Editor', // Website title
   url: `https://${firebaseConfig.projectID}.firebaseapp.com` // Website URL
 };
 

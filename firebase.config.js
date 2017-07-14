@@ -1,8 +1,8 @@
 // Firebase configuration settings
 const firebaseConfig = {
-  projectID: 'tvlk-ui-dev-rtte',
-  apiKey: 'AIzaSyBOAMZhoBnmhV6wMWCK9mX2nIvUh7rH38A',
-  messagingSenderId: '625113732027'
+  projectID: 'cother-64238',
+  apiKey: 'AIzaSyA6QnLIiaiu-G4spBraTfvm-vgxh7iY8PA',
+  messagingSenderId: '802181438883'
 };
 firebaseConfig.authDomain = `${firebaseConfig.projectID}.firebaseapp.com`;
 firebaseConfig.databaseURL = `https://${firebaseConfig.projectID}.firebaseio.com`;
