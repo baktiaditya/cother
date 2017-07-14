@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= config.title %></title>
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?<%= timestamp %>">
+  <meta name="robots" content="noindex, nofollow">
+  <!-- Dom4 -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/dom4/1.8.3/dom4.js"></script>
+
+  <!-- Flexibility -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/flexibility/2.0.1/flexibility.js"></script>
+
+  <!-- Normalize -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/codemirror.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/codemirror.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/addon/edit/closetag.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/addon/fold/xml-fold.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/xml/xml.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/javascript/javascript.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/css/css.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/htmlmixed/htmlmixed.js"></script>
+
+  <!-- Firepad -->
+  <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
+  <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js"></script>
+
+  <% if (bundleCSS){ %>
+  <link rel="stylesheet" href="<%= bundleCSS %>">
+  <% } %>
+</head>
+<body>
+  <div id="__container"></div>
+  <script src="<%= bundleJS %>"></script>
+</body>
+</html>
