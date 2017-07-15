@@ -177,6 +177,10 @@ const config = {
           limit: 10000,
           name: 'media/[hash].[ext]'
         }
+      },
+      {
+        test: /\.txt$/,
+        loader: 'raw-loader'
       }
     ]
   },

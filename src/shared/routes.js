@@ -1,6 +1,6 @@
-import ErrorPage from './pages/ErrorPage/ErrorPage';
-import HomePage from './pages/HomePage/HomePage';
-import TextEditorPage from './pages/TextEditorPage/TextEditorPage';
+import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
+import HomePage from '../pages/HomePage/HomePage';
+import TextEditorPage from '../pages/TextEditorPage/TextEditorPage';
 
 /**
  * Please read react-router plain routes
@@ -9,7 +9,7 @@ import TextEditorPage from './pages/TextEditorPage/TextEditorPage';
 export default [
   {
     path: '/not-found',
-    component: ErrorPage
+    component: NotFoundPage
   },
   {
     path: '/',

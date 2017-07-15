@@ -1,0 +1,32 @@
+{
+  "name": "cother",
+  "description": "Cother Code Together",
+  "main": "",
+  "authors": [
+    "Bakti Aditya <bakti.putra@traveloka.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/baktiaditya/cother",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "DOM4": "dom4#^1.8.3",
+    "normalize-css": "normalize.css#^7.0.0",
+    "flexibility": "^2.0.1",
+    "firebase": "3.9.0",
+    "firepad": "1.4.0",
+    "ace-builds": "1.2.8"
+  },
+  "install": {
+    "path": "public/libs",
+    "sources": {
+      "ace-builds": "bower_components/ace-builds/src-min-noconflict/**",
+      "DOM4": "bower_components/DOM4/build/dom4.js"
+    }
+  }
+}

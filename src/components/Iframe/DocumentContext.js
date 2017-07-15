@@ -6,12 +6,12 @@ export default class DocumentContext extends Component {
     document: PropTypes.object.isRequired,
     window: PropTypes.object.isRequired,
     children: PropTypes.element.isRequired
-  };
+  }
 
   static childContextTypes = {
     document: PropTypes.object.isRequired,
     window: PropTypes.object.isRequired
-  };
+  }
 
   getChildContext() {
     return {

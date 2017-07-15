@@ -1,0 +1,26 @@
+.headline {
+  color: #555;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.caption {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  font-size: .9375rem;
+  margin: 0 auto;
+  width: 280px;
+}
+
+@media only screen and (max-width: 280px) {
+  .caption {
+    width: 95%;
+  }
+
+  .headline {
+    font-size: 1.5em;
+    margin: 0 0 0.3em;
+  }
+}

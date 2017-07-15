@@ -39,7 +39,7 @@ class Iframe extends Component {
       PropTypes.element,
       PropTypes.arrayOf(PropTypes.element)
     ])
-  };
+  }
 
   static defaultProps = {
     style: {},
@@ -49,7 +49,7 @@ class Iframe extends Component {
     contentDidMount: () => {},
     contentDidUpdate: () => {},
     initialContent: '<!DOCTYPE html><html><head></head><body><div class="frame-root"></div></body></html>'
-  };
+  }
 
   constructor(props, context) {
     super(props, context);

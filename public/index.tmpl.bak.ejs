@@ -7,24 +7,24 @@
   <link rel="shortcut icon" type="image/x-icon" href="favicon.png?<%= timestamp %>">
   <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400" rel="stylesheet">
 
-  <!-- normalize-css -->
-  <link href="libs/normalize-css/normalize.css" rel="stylesheet">
+  <!-- Dom4 -->
+  <script src="libs/DOM4/dom4.max.js"></script>
 
-  <!-- DOM4 -->
-  <script src="libs/DOM4/dom4.js"></script>
-
-  <!-- flexibility -->
+  <!-- Flexibility -->
   <script src="libs/flexibility/flexibility.js"></script>
 
-  <!-- firebase -->
+  <!-- Normalize -->
+  <link rel="stylesheet" href="libs/normalize-css/normalize.css">
+
+  <!-- Firebase -->
   <script src="libs/firebase/firebase.js"></script>
 
-  <!-- ace-builds -->
-  <script src="libs/ace-builds/ace.js"></script>
+  <!-- Ace Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
 
-  <!-- firepad -->
-  <link href="libs/firepad/firepad.css" rel="stylesheet">
-  <script src="libs/firepad/firepad.min.js"></script>
+  <!-- Firepad -->
+  <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
+  <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js"></script>
 
   <% if (bundleCSS){ %>
   <link rel="stylesheet" href="<%= bundleCSS %>">

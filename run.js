@@ -3,18 +3,20 @@ const fs = require('fs');
 const del = require('del');
 const ejs = require('ejs');
 const firebase = require('firebase-tools');
+const shell = require('shelljs');
 const webpack = require('webpack');
 const firebaseConfig = require('./firebase.config');
 
 // Configuration settings
 const config = {
-  title: 'Cother &mdash; Collaborative Text Editor', // Website title
+  title: 'Cother — Collaborative Text Editor', // Website title
   url: `https://${firebaseConfig.projectID}.firebaseapp.com` // Website URL
 };
 
 global.DEBUG = process.argv.includes('--debug') || false;
 global.PUBLIC_FOLDER = 'public';
 global.DIST_FOLDER = `${global.PUBLIC_FOLDER}/dist`;
+global.LIB_FOLDER = `${global.PUBLIC_FOLDER}/libs`;
 global.PORT = process.env.PORT || 4040;
 
 const tasks = new Map(); // The collection of automation tasks ('clean', 'build', 'publish', etc.)
@@ -29,9 +31,16 @@ function run(task) {
 }
 
 //
+// Install bower dependencies
+// -----------------------------------------------------------------------------
+tasks.set('bower', () => {
+  shell.exec('./node_modules/.bin/bower-installer', { silent: true });
+});
+
+//
 // Clean up the output directory
 // -----------------------------------------------------------------------------
-tasks.set('clean', () => del([`${global.DIST_FOLDER}/*`], { dot: true }));
+tasks.set('clean', () => del([`${global.DIST_FOLDER}/*`, `${global.LIB_FOLDER}/*`], { dot: true }));
 
 //
 // Copy ./index.html into the /public folder
@@ -85,6 +94,7 @@ tasks.set('publish', () => {
 tasks.set('build', () => {
   return Promise.resolve()
   .then(() => run('clean'))
+  .then(() => run('bower'))
   .then(() => run('bundle'))
   .then(() => run('html'));
 });
@@ -94,7 +104,9 @@ tasks.set('build', () => {
 // -----------------------------------------------------------------------------
 tasks.set('start', () => {
   let count = 0;
-  return run('clean').then(() => new Promise((resolve) => {
+  return run('clean')
+  .then(() => run('bower'))
+  .then(() => new Promise((resolve) => {
     const bs = require('browser-sync').create();
     const webpackConfig = require('./webpack.config');
     const compiler = webpack(webpackConfig);

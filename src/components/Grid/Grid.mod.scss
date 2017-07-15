@@ -1,0 +1,124 @@
+@import '../../shared/variables';
+
+%row-default-styles {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -$grid-gutter-width;
+  margin-right: -$grid-gutter-width;
+}
+
+%column-default-styles {
+  position: relative;
+  flex-basis: 0;
+  flex-grow: 1;
+  max-width: 100%;
+  min-height: 1px;
+  padding-left: $grid-gutter-width;
+  padding-right: $grid-gutter-width;
+}
+
+@mixin make-col($size, $columns: $grid-columns) {
+  @extend %column-default-styles;
+  flex: 0 0 percentage($size / $columns);
+  max-width: percentage($size / $columns);
+}
+
+@mixin make-col-modifier($type, $size, $columns) {
+  @if $type == col {
+    @include make-col($size, $columns);
+  }
+}
+
+//
+// Row
+//
+
+.row {
+  @extend %row-default-styles;
+}
+
+.row-no-gutter {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+// Row Horizontal align
+//
+
+.row-halign-left {
+  justify-content: flex-start;
+}
+
+.row-halign-center {
+  justify-content: center;
+}
+
+.row-halign-right {
+  justify-content: flex-end;
+}
+
+.row-halign-around {
+  justify-content: space-around;
+}
+
+.row-halign-between {
+  justify-content: space-between;
+}
+
+// Row Vertical align
+//
+
+.row-valign-baseline {
+  align-items: baseline;
+}
+
+.row-valign-top {
+  align-items: flex-start;
+}
+
+.row-valign-middle {
+  align-items: center;
+}
+
+.row-valign-bottom {
+  align-items: flex-end;
+}
+
+//
+// Columns
+//
+
+.col {
+  @extend %column-default-styles;
+}
+
+.col-halign-left {
+  text-align: left;
+}
+
+.col-halign-right {
+  text-align: right;
+}
+
+.col-halign-center {
+  text-align: center;
+}
+
+.col-no-gutter {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.col-no-gutter-left {
+  padding-left: 0;
+}
+
+.col-no-gutter-right {
+  padding-right: 0;
+}
+
+@for $i from 1 through $grid-columns {
+  .col-#{$i} {
+    @include make-col-modifier(col, $i, $grid-columns)
+  }
+}

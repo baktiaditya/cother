@@ -6,12 +6,12 @@ class IframeContent extends React.Component {
   static propTypes = {
     extractedScripts: PropTypes.array,
     loadExternalScripts: PropTypes.array
-  };
+  }
 
   static contextTypes = {
     window: PropTypes.any,
     document: PropTypes.any
-  };
+  }
 
   _scripts = [];
 

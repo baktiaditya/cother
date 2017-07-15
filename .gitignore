@@ -3,10 +3,12 @@
 
 # Compiled output
 public/dist
+public/libs
 public/index.html
 
 # Node.js and NPM
 node_modules
+bower_components
 npm-debug.log
 
 # Firebase

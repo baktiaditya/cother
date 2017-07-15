@@ -4,13 +4,15 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import classNames from 'classnames/bind';
 
-import { firebaseDb } from '../../firebase';
-import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../constants';
+import { firebaseDb } from '../../shared/firebase';
+import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import scss from './TextEditorPage.mod.scss';
+import defaultHtml from './defaultHtml.txt';
 
 // Components
 import Base from '../../components/Base/Base';
 import Iframe, { IframeContent } from '../../components/Iframe/Iframe';
+import { Row, Column } from '../../components/Grid/Grid';
 
 class TextEditorPage extends React.Component {
   static propTypes = {
@@ -22,6 +24,8 @@ class TextEditorPage extends React.Component {
   };
   _firepad;
   _firepadRef = firebaseDb.ref(`${this.props.params.action}_html`);
+  _htmlEditor;
+  _style;
 
   state = {
     html: '',
@@ -31,31 +35,65 @@ class TextEditorPage extends React.Component {
     ]
   }
 
-  componentDidMount() {
+  componentWillMount() {
     // Page title
     document.getElementsByTagName('title')[0].innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} ${this.props.params.action}`;
 
-    const editor = window.ace.edit('html');
-    editor.setTheme('ace/theme/tomorrow_night');
-    editor.getSession().setMode('ace/mode/html');
-    editor.getSession().setTabSize(2);
-    editor.getSession().setUseWrapMode(true);
-    editor.setShowInvisibles(false);
-    editor.on('change', () => {
-      const code = editor.getValue();
-      this.updateIframe(code);
+    // Create custom <style /> in <head />
+    let css = `body { padding-top: ${scss['headerHeight']}; }`;
+    css += 'body, html, #__container, #base, [data-reactroot] { height: 100%; }';
+    const head = document.head || document.getElementsByTagName('head')[0];
+    this._style = document.createElement('style');
+
+    this._style.type = 'text/css';
+    if (this._style.styleSheet) {
+      this._style.styleSheet.cssText = css;
+    } else {
+      this._style.appendChild(document.createTextNode(css));
+    }
+
+    head.appendChild(this._style);
+  }
+
+  componentDidMount() {
+    this._htmlEditor = window.ace.edit('html');
+    this._htmlEditor.session.setMode('ace/mode/html');
+    this._htmlEditor.session.setTabSize(2);
+    this._htmlEditor.session.setUseWrapMode(true);
+    this._htmlEditor.renderer.setScrollMargin(10, 10);
+    this._htmlEditor.renderer.setPadding(10);
+    this._htmlEditor.$blockScrolling = Infinity;
+    // https://github.com/ajaxorg/ace/blob/v1.2.3/lib/ace/virtual_renderer.js#L1611-L1750
+    this._htmlEditor.setOptions({
+      showGutter: false,
+      vScrollBarAlwaysVisible: false,
+      theme: 'ace/theme/tomorrow_night'
+    });
+    this._htmlEditor.on('change', () => {
+      const html = this._htmlEditor.getValue();
+      this.updateIframe(html);
     });
 
-    this._firepad = window.Firepad.fromACE(this._firepadRef, editor);
+    this._firepad = window.Firepad.fromACE(this._firepadRef, this._htmlEditor, {
+      defaultText: defaultHtml
+    });
   }
 
   componentWillUnmount() {
+    // Destroy firepad
     this._firepad.dispose();
+
+    // Destroy Ace editor
+    this._htmlEditor.destroy();
+
+    // Remove custom <style /> in <head />
+    const head = document.head || document.getElementsByTagName('head')[0];
+    head.removeChild(this._style);
   }
 
-  extractScript(s) {
+  extractScript(code) {
     const div = document.createElement('div');
-    div.innerHTML = s;
+    div.innerHTML = code;
     const scripts = div.getElementsByTagName('script');
     const scriptsArr = [];
     for (let i = 0; i < scripts.length; i++) {
@@ -76,22 +114,22 @@ class TextEditorPage extends React.Component {
 
   render() {
     const cx = classNames.bind(scss);
+    const logoImg = require('../../shared/assets/logo.svg');
 
     return (
       <Base>
         <div className={cx('header')}>
-          <h3>Text Editor Page</h3>
-          <Link to='/' className={scss['link']}>Home</Link>
+          <Link to='/' className={cx('brand')}>
+            <img src={logoImg} alt='Cother' />
+            <h1>Cother</h1>
+          </Link>
         </div>
 
-        <div className={cx('row')}>
-          <div className={cx('column')}>
-            <div className={cx('editor-type')}>
-              <span>HTML</span>
-            </div>
+        <Row className={cx('row')} noGutter>
+          <Column className={cx('column', 'column-html')} noGutter>
             <div id='html' className={cx('editor-container')} />
-          </div>
-          <div className={cx('column')}>
+          </Column>
+          <Column className={cx('column')} noGutter>
             <Iframe
               frameBorder={0}
               className={cx('iframe')}
@@ -102,8 +140,8 @@ class TextEditorPage extends React.Component {
                 dangerouslySetInnerHTML={{ __html: this.state.html }}
               />
             </Iframe>
-          </div>
-        </div>
+          </Column>
+        </Row>
       </Base>
     );
   }
