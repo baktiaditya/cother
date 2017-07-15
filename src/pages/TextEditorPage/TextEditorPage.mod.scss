@@ -10,40 +10,6 @@
   headerHeight: $header-height;
 }
 
-.header {
-  position: absolute;
-  width: 100%;
-  height: $header-height;
-  top: 0;
-  left: 0;
-  padding: 0 $grid-gutter-width;
-  display: flex;
-  align-items: center;
-  background-color: $header-bg-color;
-  color: $header-color;
-
-  .brand {
-    display: flex;
-    color: $white;
-    font-size: 18px;
-    text-decoration: none;
-    align-items: center;
-
-    img {
-      display: inline-block;
-      margin-right: 6px;
-    }
-
-    h1 {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 18px;
-      font-weight: 200;
-      margin: 0;
-      display: inline-block;
-    }
-  }
-}
-
 .link {
   display: inline-block;
   margin-bottom: 20px;
@@ -53,16 +19,11 @@
   height: 100%;
 }
 
-.column {
-  height: 100%;
+.cell {
   border-right: 1px solid #ccc;
 
   &:last-child {
     border-right: 0;
-  }
-
-  &.column-html {
-    background-color: $header-bg-color;
   }
 }
 

@@ -8,6 +8,7 @@ import scss from './ResizeableGrid.mod.scss';
 class Cell extends React.Component {
   static propTypes = {
     className: PropTypes.string,
+    hide: PropTypes.bool,
     style: PropTypes.object,
     onDimensionChange: PropTypes.func,
     type: PropTypes.oneOf(['row', 'column']),
@@ -31,6 +32,7 @@ class Cell extends React.Component {
   render() {
     const {
       className,
+      hide,
       style,
       type,
       height,
@@ -39,7 +41,7 @@ class Cell extends React.Component {
     } = this.props;
     delete props.onDimensionChange;
 
-    let combinedStyle = {};
+    let combinedStyle = style;
     if (type === 'row') {
       combinedStyle = {
         flex: `0 0 ${width}px`,
@@ -58,7 +60,8 @@ class Cell extends React.Component {
     const classes = cx(
       className,
       'cell',
-      `type-${type}`
+      `cell-type-${type}`,
+      { 'cell-hide': hide }
     );
 
     return (

@@ -56,7 +56,7 @@ class Resizeable extends React.Component {
     const classes = cx(
       className,
       'resizeable',
-      `type-${type}`
+      `resizeable-type-${type}`
     );
 
     const combinedStyle = {

@@ -8,6 +8,7 @@ import { Cell } from './Cell';
 class Splitter extends React.Component {
   static propTypes = {
     className: PropTypes.string,
+    hide: PropTypes.bool,
     onDragStart: PropTypes.func,
     onDragMove: PropTypes.func,
     onDragStop: PropTypes.func,
@@ -113,6 +114,7 @@ class Splitter extends React.Component {
   render() {
     const {
       className,
+      hide,
       type,
       ...props
     } = this.props;
@@ -123,7 +125,11 @@ class Splitter extends React.Component {
     const cx = classNames.bind(scss);
     const classes = cx(
       className,
-      `${type === 'row' ? 'vertical-splitter' : 'horizontal-splitter'}`
+      `${type === 'row' ? 'splitter-vertical' : 'splitter-horizontal'}`,
+      {
+        'splitter-hide': hide,
+        'splitter-dragging': this.state.dragging
+      }
     );
 
     const elemProps = {

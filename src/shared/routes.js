@@ -16,7 +16,7 @@ export default [
     component: HomePage
   },
   {
-    path: '/:action',
+    path: '/:id',
     component: TextEditorPage
   },
   {

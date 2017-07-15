@@ -4,10 +4,10 @@
   display: flex;
   overflow: hidden;
 
-  &.type-row {
+  &.resizeable-type-row {
     flex-flow: row wrap;
   }
-  &.type-column {
+  &.resizeable-type-column {
     flex-flow: column wrap;
   }
 }
@@ -18,24 +18,36 @@
   flex-grow: 1;
   background-color: $white;
 
-  &.type-row {
+  &.cell-type-row {
     max-width: 100%;
     min-height: 1px;
   }
-  &.type-column {
+  &.cell-type-column {
     max-height: 100%;
     min-width: 1px;
   }
+  &.cell-hide {
+    display: none;
+  }
 }
 
-.horizontal-splitter {
+.splitter-horizontal {
   background: url('../../shared/assets/hsizegrip.png') center center no-repeat $header-bg-color;
   cursor: row-resize;
   z-index: 10;
 }
 
-.vertical-splitter {
+.splitter-vertical {
   background: url('../../shared/assets/vsizegrip.png') center center no-repeat $header-bg-color;
   cursor: col-resize;
+  border-right: 1px solid lighten($header-bg-color, 5%);
   z-index: 10;
+}
+
+.splitter-dragging {
+  background-color: lighten($header-bg-color, 20%);
+}
+
+.splitter-hide {
+  display: none;
 }
