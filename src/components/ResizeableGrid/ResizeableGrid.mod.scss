@@ -1,0 +1,41 @@
+@import '../../shared/variables';
+
+.resizeable {
+  display: flex;
+  overflow: hidden;
+
+  &.type-row {
+    flex-flow: row wrap;
+  }
+  &.type-column {
+    flex-flow: column wrap;
+  }
+}
+
+.cell {
+  position: relative;
+  flex-basis: 0;
+  flex-grow: 1;
+  background-color: $white;
+
+  &.type-row {
+    max-width: 100%;
+    min-height: 1px;
+  }
+  &.type-column {
+    max-height: 100%;
+    min-width: 1px;
+  }
+}
+
+.horizontal-splitter {
+  background: url('../../shared/assets/hsizegrip.png') center center no-repeat $header-bg-color;
+  cursor: row-resize;
+  z-index: 10;
+}
+
+.vertical-splitter {
+  background: url('../../shared/assets/vsizegrip.png') center center no-repeat $header-bg-color;
+  cursor: col-resize;
+  z-index: 10;
+}

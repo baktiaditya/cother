@@ -11,6 +11,7 @@ import defaultHtml from './defaultHtml.txt';
 
 // Components
 import Base from '../../components/Base/Base';
+import Iframe, { IframeContent } from '../../components/Iframe/Iframe';
 import { Row, Cell, Splitter } from '../../components/ResizeableGrid/ResizeableGrid';
 
 class TextEditorPage extends React.Component {
@@ -18,6 +19,9 @@ class TextEditorPage extends React.Component {
     params: PropTypes.object
   }
 
+  _externalScriptList = {
+    jquery: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js'
+  };
   _firepad;
   _firepadRef = firebaseDb.ref(`${this.props.params.action}_html`);
   _htmlEditor;
@@ -25,6 +29,10 @@ class TextEditorPage extends React.Component {
 
   state = {
     html: '',
+    extractedScripts: [],
+    externalScripts: [
+      this._externalScriptList.jquery
+    ],
     showIframeMask: false
   }
 
@@ -64,18 +72,11 @@ class TextEditorPage extends React.Component {
     });
     this._htmlEditor.on('change', () => {
       const html = this._htmlEditor.getValue();
-      const bodyRegex = /<\/body>(?![\s\S]*<\/body>[\s\S]*$)/i; // find closing body tag
-      const css = '<style></style>';
-      let content = html;
-      if (bodyRegex.test(html)) {
-        content = html.replace(bodyRegex, `${css}\n<body/>`);
-      } else {
-        content = `${html}${css}`;
-      }
+      this.updateIframe(html);
 
-      const iframeDoc = document.getElementById(scss['iframe']).contentWindow.document;
+      const iframeDoc = document.getElementById('iframeId').contentWindow.document;
       iframeDoc.open();
-      iframeDoc.write(content);
+      iframeDoc.write(html);
       iframeDoc.close();
     });
 
@@ -94,6 +95,27 @@ class TextEditorPage extends React.Component {
     // Remove custom <style /> in <head />
     const head = document.head || document.getElementsByTagName('head')[0];
     head.removeChild(this._style);
+  }
+
+  extractScript(code) {
+    const div = document.createElement('div');
+    div.innerHTML = code;
+    const scripts = div.getElementsByTagName('script');
+    const scriptsArr = [];
+    for (let i = 0; i < scripts.length; i++) {
+      scriptsArr.push(scripts[i].innerHTML);
+    }
+
+    return scriptsArr;
+  }
+
+  updateIframe(code) {
+    const extractedScripts = this.extractScript(code);
+
+    this.setState({
+      html: code,
+      extractedScripts
+    });
   }
 
   render() {
@@ -120,12 +142,18 @@ class TextEditorPage extends React.Component {
           <Cell>
             {/* Use mask to prevent Splitter drag error */}
             {this.state.showIframeMask && <div className={scss['iframe-mask']} />}
-            <iframe
-              id={scss['iframe']}
-              frameBorder={0}
-              scrolling='yes'
-              allowFullScreen
-            />
+            {/*<Iframe*/}
+            {/*frameBorder={0}*/}
+            {/*className={scss['iframe']}*/}
+            {/*allowFullScreen*/}
+            {/*>*/}
+            {/*<IframeContent*/}
+            {/*loadExternalScripts={this.state.externalScripts}*/}
+            {/*extractedScripts={this.state.extractedScripts}*/}
+            {/*dangerouslySetInnerHTML={{ __html: this.state.html }}*/}
+            {/*/>*/}
+            {/*</Iframe>*/}
+            <iframe id='iframeId' frameBorder={0} className={scss['iframe']} allowFullScreen />
           </Cell>
         </Row>
       </Base>

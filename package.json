@@ -5,6 +5,7 @@
   "description": "Cother Code Together",
   "dependencies": {
     "classnames": "^2.2.5",
+    "css-element-queries": "^0.4.0",
     "es6-promise": "^4.1.0",
     "lodash": "^4.17.4",
     "prop-types": "^15.5.10",
