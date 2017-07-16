@@ -50,6 +50,7 @@
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.11.1",
     "firebase-tools": "^3.7.0",
+    "html-minifier": "^3.5.2",
     "imagemin-mozjpeg": "^6.0.0",
     "imagemin-webpack-plugin": "^1.5.0-beta.0",
     "json-loader": "^0.5.4",
@@ -70,8 +71,7 @@
     "start": "node run --debug",
     "start:prod": "node run",
     "build": "node run build",
-    "publish": "node run publish",
-    "bower": "node run bower"
+    "publish": "node run publish"
   },
   "babel": {
     "presets": [

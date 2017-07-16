@@ -5,13 +5,16 @@ const ejs = require('ejs');
 const firebase = require('firebase-tools');
 const shell = require('shelljs');
 const webpack = require('webpack');
+const minify = require('html-minifier').minify;
 const firebaseConfig = require('./firebase.config');
 
 // Configuration settings
-const config = {
+let config = {
   title: 'Cother — Collaborative Text Editor', // Website title
   url: 'https://cother.bvap.me' // Website URL
 };
+
+config = Object.assign({}, config, firebaseConfig);
 
 global.DEBUG = process.argv.includes('--debug') || false;
 global.PUBLIC_FOLDER = 'public';
@@ -56,7 +59,10 @@ tasks.set('html', () => {
     timestamp: Math.round(new Date().getTime() / 1000),
     config
   });
-  fs.writeFileSync(`${global.PUBLIC_FOLDER}/index.html`, output, 'utf8');
+  fs.writeFileSync(`${global.PUBLIC_FOLDER}/index.html`, minify(output, {
+    removeComments: true,
+    collapseWhitespace: true
+  }), 'utf8');
 });
 
 //

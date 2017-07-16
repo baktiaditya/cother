@@ -6,18 +6,19 @@
     "public": "public",
     "ignore": [
       "firebase.json",
+      "index.tmpl.ejs",
       "**/.*",
       "**/node_modules/**",
       "**/bower_components/**"
     ],
     "headers": [{
-      "source": "**/*.@(eot|otf|ttf|ttc|woff|woff2|font.css)",
+      "source": "**/*.@(eot|otf|ttf|ttc|woff|woff2)",
       "headers": [{
         "key": "Access-Control-Allow-Origin",
         "value": "*"
       }]
     }, {
-      "source": "**/*.@(jpg|jpeg|gif|png)",
+      "source": "**/*.@(jpg|jpeg|gif|png|svg)",
       "headers": [{
         "key": "Cache-Control",
         "value": "max-age=7200"
