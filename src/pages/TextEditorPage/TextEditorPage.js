@@ -17,6 +17,7 @@ class TextEditorPage extends React.Component {
   }
 
   _id = this.props.params.id;
+  _userId = Math.floor(Math.random() * 9999999999).toString();
   _editor = {
     html: null,
     css: null
@@ -26,8 +27,8 @@ class TextEditorPage extends React.Component {
     css: null
   };
   _firepadRef = {
-    html: firebaseDb.ref(`${this._id}_html`),
-    css: firebaseDb.ref(`${this._id}_css`)
+    html: firebaseDb.ref(`${this._id}/html`),
+    css: firebaseDb.ref(`${this._id}/css`)
   }
   _html = require('./defaultHtml.txt');
   _css = require('./defaultCss.txt');
@@ -71,6 +72,7 @@ class TextEditorPage extends React.Component {
     });
 
     this._firepad.html = window.Firepad.fromACE(this._firepadRef.html, this._editor.html, {
+      userId: this._userId,
       defaultText: this._html
     });
     this._firepad.html.on('ready', () => this.setState({ editorReady: [...this.state.editorReady, 'html'] }));
@@ -85,6 +87,7 @@ class TextEditorPage extends React.Component {
     });
 
     this._firepad.css = window.Firepad.fromACE(this._firepadRef.css, this._editor.css, {
+      userId: this._userId,
       defaultText: this._css
     });
     this._firepad.css.on('ready', () => this.setState({ editorReady: [...this.state.editorReady, 'css'] }));
@@ -145,6 +148,8 @@ class TextEditorPage extends React.Component {
     return (
       <Base>
         <Header
+          firepadRef={this._firepadRef.html}
+          userId={this._userId}
           isLoading={!this.state.editorReady.includes('html') && !this.state.editorReady.includes('css')}
         />
 

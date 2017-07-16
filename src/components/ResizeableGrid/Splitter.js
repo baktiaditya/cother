@@ -125,6 +125,7 @@ class Splitter extends React.Component {
     const cx = classNames.bind(scss);
     const classes = cx(
       className,
+      'splitter',
       `${type === 'row' ? 'splitter-vertical' : 'splitter-horizontal'}`,
       {
         'splitter-hide': hide,

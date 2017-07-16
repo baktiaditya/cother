@@ -31,17 +31,40 @@
   }
 }
 
+.splitter {
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    z-index: 10;
+    background-color: lighten($header-bg-color, 5%);
+  }
+}
+
 .splitter-horizontal {
   background: url('../../shared/assets/hsizegrip.png') center center no-repeat $header-bg-color;
   cursor: row-resize;
   z-index: 10;
+
+  &:after {
+    left: 0;
+    height: 1px;
+    width: 100%;
+  }
 }
 
 .splitter-vertical {
   background: url('../../shared/assets/vsizegrip.png') center center no-repeat $header-bg-color;
   cursor: col-resize;
-  border-right: 1px solid lighten($header-bg-color, 5%);
   z-index: 10;
+
+  &:after {
+    right: 0;
+    width: 1px;
+    height: 100%;
+  }
 }
 
 .splitter-dragging {

@@ -2,12 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import Loader from '../Loader/Loader';
+import UserList from '../UserList/UserList';
 import scss from './Header.mod.scss';
 
 class Header extends React.Component {
   static propTypes = {
     brand: PropTypes.string,
-    isLoading: PropTypes.bool
+    isLoading: PropTypes.bool,
+
+    //------
+    firepadRef: PropTypes.object.isRequired,
+    userId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    displayName: PropTypes.string
   }
 
   static defaultProps = {
@@ -17,6 +23,9 @@ class Header extends React.Component {
   render() {
     const {
       brand,
+      displayName,
+      firepadRef,
+      userId,
       isLoading
     } = this.props;
 
@@ -29,7 +38,17 @@ class Header extends React.Component {
           <h1>{brand}</h1>
         </Link>
 
-        {isLoading && <Loader />}
+        {isLoading
+          ? <Loader />
+          : (
+            <UserList
+              firepadRef={firepadRef}
+              userId={userId}
+              displayName={displayName}
+              className={scss['user-list']}
+            />
+          )
+        }
       </div>
     );
   }
