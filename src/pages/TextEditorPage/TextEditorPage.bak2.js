@@ -16,6 +16,7 @@ class TextEditorPage extends React.Component {
     params: PropTypes.object
   }
 
+  _isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
   _id = this.props.params.id;
   _userId = Math.floor(Math.random() * 9999999999).toString();
   _editor = {
@@ -129,10 +130,10 @@ class TextEditorPage extends React.Component {
         let html = this._html;
         const css = this._css;
         if (bodyRegex.test(html)) {
-          html = html.replace(bodyRegex, `<style type="text/css">${css}</style>\n</body>`);
+          html = html.replace(bodyRegex, `<style>${css}</style>\n</body>`);
         }
         else {
-          html = `${html}<style type="text/css">${css}</style>`;
+          html = `${html}<style>${css}</style>`;
         }
 
         const iframe = document.getElementById(scss['iframe']);
@@ -140,45 +141,41 @@ class TextEditorPage extends React.Component {
         const iframeHead = iframeDoc.head;
         const iframeBody = iframeDoc.body;
 
-        // Do Firefox-related activities
-        const { scriptsArr, scriptsSrcArr } = this.extractScript(html);
-        // console.log('scriptsArr', scriptsArr);
-        // console.log('scriptsSrcArr', scriptsSrcArr);
+        if (!this._isFirefox) {
+          // Do Firefox-related activities
+          const { scriptsArr, scriptsSrcArr } = this.extractScript(html);
+          // console.log('scriptsArr', scriptsArr);
+          // console.log('scriptsSrcArr', scriptsSrcArr);
 
-        const SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-        while (SCRIPT_REGEX.test(html)) {
-          html = html.replace(SCRIPT_REGEX, '');
-        }
-        // console.log('html', html);
+          const SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+          while (SCRIPT_REGEX.test(html)) {
+            html = html.replace(SCRIPT_REGEX, '');
+          }
+          // console.log('html', html);
 
-        const head = html.match(/<head[^>]*>[\s\S]*<\/head>/gi);
-        const body = html.match(/<body[^>]*>[\s\S]*<\/body>/gi);
-        // console.log('head', head);
-        // console.log('body', body);
+          const head = html.match(/<head[^>]*>[\s\S]*<\/head>/gi);
+          const body = html.match(/<body[^>]*>[\s\S]*<\/body>/gi);
+          // console.log('head', head);
+          // console.log('body', body);
 
-        iframeHead.innerHTML = head;
-        iframeBody.innerHTML = body;
+          iframeHead.innerHTML = head;
+          iframeBody.innerHTML = body;
 
-        if (scriptsSrcArr.length > 0) {
-          scriptsSrcArr.forEach((src, num) => {
-            if (num === (scriptsSrcArr.length - 1)) {
-              this.loadIframeScriptSrc(iframeDoc, src, () => {
-                if (scriptsArr.length > 0) {
-                  scriptsArr.forEach((script) => {
-                    this.loadIframeScriptInline(iframeDoc, script);
-                  });
-                }
-              });
-            } else {
+          if (scriptsSrcArr.length > 0) {
+            scriptsSrcArr.forEach((src) => {
               this.loadIframeScriptSrc(iframeDoc, src);
-            }
-          });
-        } else {
+            });
+          }
+
           if (scriptsArr.length > 0) {
             scriptsArr.forEach((script) => {
               this.loadIframeScriptInline(iframeDoc, script);
             });
           }
+        } else {
+          iframeDoc.open();
+          iframeDoc.write(html);
+          iframeDoc.close();
         }
       });
     });
@@ -213,7 +210,6 @@ class TextEditorPage extends React.Component {
     const s = iframeDoc.createElement('script');
     s.type = 'text/javascript';
     s.src = src;
-    s.async = true;
     s.onload = s.onreadystatechange = () => {
       // console.log(this.readyState); // uncomment this line to see which ready states are called.
       if (!r && (!this.readyState || this.readyState === 'complete')) {
