@@ -4,39 +4,39 @@
 // https://firebase.google.com/docs/database/admin/retrieve-data
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames/bind';
+import Icon from '../Icon/Icon';
+import scss from './UserList.mod.scss';
 
 class UserList extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
     firepadRef: PropTypes.object,
     userId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     displayName: PropTypes.string
   };
 
-  constructor(props) {
-    super(props);
+  _displayName = this.props.displayName || `Guest ${Math.floor(Math.random() * 1000)}`;
+  _userRef = this.props.firepadRef.getParent().child(`presence/${this.props.userId}`);
+  _colorRef = this.props.firepadRef.child(`users/${this.props.userId}/color`);
 
-    this.state = {
-      userList: {}
-    };
-
-    this.displayName = props.displayName || `Guest ${Math.floor(Math.random() * 1000)}`;
-    this.userRef = props.firepadRef.getParent().child(`presence/${props.userId}`);
-    this.colorRef = props.firepadRef.child(`users/${props.userId}/color`);
-  }
+  state = {
+    userList: {}
+  };
 
   componentWillMount() {
-    this.colorRef.on('value', (snapshot) => {
-      if (snapshot.val() && this.displayName) {
-        const nameRef = this.userRef.child('name');
-        const colorRef = this.userRef.child('color');
+    this._colorRef.on('value', (snapshot) => {
+      if (snapshot.val() && this._displayName) {
+        const nameRef = this._userRef.child('name');
+        const colorRef = this._userRef.child('color');
 
-        nameRef.set(this.displayName);
+        nameRef.set(this._displayName);
         colorRef.set(snapshot.val());
-        this.userRef.onDisconnect().remove();
+        this._userRef.onDisconnect().remove();
       }
     });
 
-    this.userRef.getParent().on('value', (snapshot) => {
+    this._userRef.getParent().on('value', (snapshot) => {
       this.setState({
         userList: snapshot.val()
       }, () => {
@@ -50,27 +50,31 @@ class UserList extends React.Component {
   }
 
   componentWillUnmount() {
-    this.userRef.getParent().off('value');
-    this.userRef.remove();
-    this.colorRef.off('value');
+    this._userRef.getParent().off('value');
+    this._userRef.remove();
+    this._colorRef.off('value');
   }
 
   render() {
     const {
+      className,
       ...props
     } = this.props;
     delete props.firepadRef;
     delete props.userId;
     delete props.displayName;
 
+    const cx = classNames.bind(scss);
+    const classes = cx(
+      className,
+      'user-list'
+    );
     const totalUsers = Object.keys(this.state.userList).length;
-    let caption = 'user';
-    if (Number(totalUsers) > 1) {
-      caption = 'users';
-    }
 
     return (
-      <div {...props}>{`${totalUsers} ${caption} online`}</div>
+      <div {...props} className={classes}>
+        {totalUsers}&nbsp;&nbsp;<Icon size={20} icon='remove-red-eye' />
+      </div>
     );
   }
 }
