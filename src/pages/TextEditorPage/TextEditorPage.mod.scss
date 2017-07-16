@@ -20,11 +20,7 @@
 }
 
 .cell {
-  border-right: 1px solid #ccc;
-
-  &:last-child {
-    border-right: 0;
-  }
+  height: 100%;
 }
 
 .editor-container {

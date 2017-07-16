@@ -16,6 +16,7 @@ class TextEditorPage extends React.Component {
     params: PropTypes.object
   }
 
+  _isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
   _id = this.props.params.id;
   _userId = Math.floor(Math.random() * 9999999999).toString();
   _editor = {
@@ -129,15 +130,29 @@ class TextEditorPage extends React.Component {
         let html = this._html;
         const css = this._css;
         if (bodyRegex.test(html)) {
-          html = html.replace(bodyRegex, `<style>${css}</style>\n<body/>`);
-        } else {
+          html = html.replace(bodyRegex, `<style>${css}</style>\n</body>`);
+        }
+        else {
           html = `${html}<style>${css}</style>`;
         }
 
-        const iframeDoc = document.getElementById(scss['iframe']).contentWindow.document;
-        iframeDoc.open();
-        iframeDoc.write(html);
-        iframeDoc.close();
+        const iframe = document.getElementById(scss['iframe']);
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const iframeBody = iframeDoc.body;
+
+        if (this._isFirefox) {
+          // Do Firefox-related activities
+          // const head = html.match(/<head[^>]*>[\s\S]*<\/head>/gi);
+          const body = html.match(/<body[^>]*>[\s\S]*<\/body>/gi);
+          // console.log(html);
+          // console.log(head);
+          // console.log(body);
+          iframeBody.innerHTML = body;
+        } else {
+          iframeDoc.open();
+          iframeDoc.write(html);
+          iframeDoc.close();
+        }
       });
     });
 
@@ -153,9 +168,10 @@ class TextEditorPage extends React.Component {
           isLoading={!this.state.editorReady.includes('html') && !this.state.editorReady.includes('css')}
         />
 
-        <Row>
+        <Row className={scss['row']}>
           {/* HTML */}
           <Cell
+            className={scss['cell']}
             hide={!this.state.showEditor.includes('html')}
             onDimensionChange={() => this._editor.html && this._editor.html.resize()}
           >
@@ -170,6 +186,7 @@ class TextEditorPage extends React.Component {
 
           {/* CSS */}
           <Cell
+            className={scss['cell']}
             hide={!this.state.showEditor.includes('css')}
             onDimensionChange={() => this._editor.css && this._editor.css.resize()}
           >
@@ -182,7 +199,7 @@ class TextEditorPage extends React.Component {
             onDragStop={() => this.setState({ showIframeMask: false })}
           />
 
-          <Cell>
+          <Cell className={scss['cell']}>
             {/* Use mask to prevent Splitter drag error */}
             {this.state.showIframeMask && <div className={scss['iframe-mask']} />}
             <iframe
