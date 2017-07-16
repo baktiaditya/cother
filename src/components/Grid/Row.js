@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import scss from './Grid.mod.scss';
 
-class Row extends React.Component {
+class Row extends Component {
   static propTypes = {
     className: PropTypes.string,
     halign: PropTypes.oneOf(['left', 'right', 'center', 'around', 'between']),

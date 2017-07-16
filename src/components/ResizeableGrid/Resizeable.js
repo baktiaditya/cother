@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import scss from './ResizeableGrid.mod.scss';
 
-class Resizeable extends React.Component {
+class Resizeable extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,

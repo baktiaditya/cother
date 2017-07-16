@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import scss from './ResizeableGrid.mod.scss';
 import { Cell } from './Cell';
 
-class Splitter extends React.Component {
+class Splitter extends Component {
   static propTypes = {
     className: PropTypes.string,
     hide: PropTypes.bool,

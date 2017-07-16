@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import * as scss from './Loader.mod.scss';
 
-class Loader extends React.Component {
+class Loader extends Component {
   static propTypes = {
     className: PropTypes.string,
     color: PropTypes.oneOf(['white', 'gray-lighter', 'yellow']),

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { ResizeSensor } from 'css-element-queries';
 import classNames from 'classnames/bind';
 import scss from './ResizeableGrid.mod.scss';
 
-class Cell extends React.Component {
+class Cell extends Component {
   static propTypes = {
     className: PropTypes.string,
     hide: PropTypes.bool,

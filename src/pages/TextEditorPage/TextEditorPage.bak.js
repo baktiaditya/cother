@@ -7,7 +7,7 @@ import classNames from 'classnames/bind';
 import { firebaseDb } from '../../shared/firebase';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import scss from './TextEditorPage.mod.scss';
-import defaultHtml from './defaultHtml.txt';
+import defaultHtml from './templates/defaultHtml.html';
 
 // Components
 import Base from '../../components/Base/Base';

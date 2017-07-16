@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames/bind';
 import scss from './Grid.mod.scss';
 
-class Column extends React.Component {
+class Column extends Component {
   static propTypes = {
     className: PropTypes.string,
     componentRef: PropTypes.func,

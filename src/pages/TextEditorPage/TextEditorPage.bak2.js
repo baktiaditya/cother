@@ -31,8 +31,8 @@ class TextEditorPage extends React.Component {
     html: firebaseDb.ref(`${this._id}/html`),
     css: firebaseDb.ref(`${this._id}/css`)
   }
-  _html = require('./defaultHtml.txt');
-  _css = require('./defaultCss.txt');
+  _html = require('./templates/defaultHtml.html');
+  _css = require('./templates/defaultCss.string.css');
   _style;
 
   state = {

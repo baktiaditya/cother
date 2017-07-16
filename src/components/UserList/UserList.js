@@ -2,13 +2,14 @@
 // https://github.com/firebase/firepad/blob/master/examples/firepad-userlist.js
 // https://firebase.googleblog.com/2013/06/how-to-build-presence-system.html
 // https://firebase.google.com/docs/database/admin/retrieve-data
-import React from 'react';
+
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import Icon from '../Icon/Icon';
 import scss from './UserList.mod.scss';
 
-class UserList extends React.Component {
+class UserList extends Component {
   static propTypes = {
     className: PropTypes.string,
     firepadRef: PropTypes.object,
@@ -45,7 +46,7 @@ class UserList extends React.Component {
     });
   }
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
+  shouldComponentUpdate(nextProps, nextState) {
     return JSON.stringify(this.state.userList) !== JSON.stringify(nextState.userList);
   }
 

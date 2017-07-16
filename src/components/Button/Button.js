@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import scss from './Button.mod.scss';
 
-class Button extends React.Component {
+class Button extends Component {
   static propTypes = {
     children: PropTypes.node
   };

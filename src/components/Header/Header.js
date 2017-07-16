@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import Loader from '../Loader/Loader';
 import UserList from '../UserList/UserList';
 import scss from './Header.mod.scss';
 
-class Header extends React.Component {
+class Header extends Component {
   static propTypes = {
     brand: PropTypes.string,
     isLoading: PropTypes.bool,

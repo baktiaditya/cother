@@ -10,7 +10,7 @@ const firebaseConfig = require('./firebase.config');
 // Configuration settings
 const config = {
   title: 'Cother — Collaborative Text Editor', // Website title
-  url: `https://${firebaseConfig.projectID}.firebaseapp.com` // Website URL
+  url: 'https://cother.bvap.me' // Website URL
 };
 
 global.DEBUG = process.argv.includes('--debug') || false;

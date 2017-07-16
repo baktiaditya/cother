@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { slugify } from '../../shared/utils';
+import scss from './Base.string.scss';
 
-class Base extends React.Component {
+class Base extends Component {
+  static displayName = 'Base';
+
   static propTypes = {
     children: PropTypes.node
   }
@@ -10,15 +14,14 @@ class Base extends React.Component {
 
   componentWillMount() {
     // Create custom <style /> in <head />
-    const css = require('./Base.css.txt');
     const head = document.head || document.getElementsByTagName('head')[0];
     this._style = document.createElement('style');
-
+    this._style.id = slugify(Base.displayName);
     this._style.type = 'text/css';
     if (this._style.styleSheet) {
-      this._style.styleSheet.cssText = css;
+      this._style.styleSheet.cssText = scss;
     } else {
-      this._style.appendChild(document.createTextNode(css));
+      this._style.appendChild(document.createTextNode(scss));
     }
 
     head.appendChild(this._style);

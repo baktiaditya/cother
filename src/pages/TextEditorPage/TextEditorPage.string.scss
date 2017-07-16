@@ -1,0 +1,13 @@
+@import "../../shared/variables";
+
+body {
+  padding-top: $header-height;
+}
+
+body, html, #__container, #base, [data-reactroot] {
+  height: 100%;
+}
+
+.powered-by-firepad {
+  display: none;
+}

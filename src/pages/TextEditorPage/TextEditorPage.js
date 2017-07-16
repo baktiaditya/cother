@@ -1,16 +1,20 @@
 /* eslint no-console:0, no-eval:0, no-param-reassign:0 */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { firebaseDb } from '../../shared/firebase';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
+import { slugify } from '../../shared/utils';
 import scss from './TextEditorPage.mod.scss';
+import scssString from './TextEditorPage.string.scss';
 
 // Components
 import Base from '../../components/Base/Base';
 import Header from '../../components/Header/Header';
 import { Row, Cell, Splitter } from '../../components/ResizeableGrid/ResizeableGrid';
 
-class TextEditorPage extends React.Component {
+class TextEditorPage extends Component {
+  static displayName = 'TextEditorPage';
+
   static propTypes = {
     // from react-router
     params: PropTypes.object
@@ -30,8 +34,8 @@ class TextEditorPage extends React.Component {
     html: firebaseDb.ref(`${this._id}/html`),
     css: firebaseDb.ref(`${this._id}/css`)
   }
-  _html = require('./defaultHtml.txt');
-  _css = require('./defaultCss.txt');
+  _html = require('./templates/defaultHtml.html');
+  _css = require('./templates/defaultCss.string.css');
   _style;
   _editorChangedTimeout;
 
@@ -43,19 +47,18 @@ class TextEditorPage extends React.Component {
 
   componentWillMount() {
     // Page title
-    document.getElementsByTagName('title')[0].innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} ${this._id}`;
+    const titleTag = document.getElementsByTagName('title')[0];
+    titleTag.innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} ${this._id}`;
 
     // Create custom <style /> in <head />
-    let css = `body { padding-top: ${scss['headerHeight']}; }`;
-    css += 'body, html, #__container, #base, [data-reactroot] { height: 100%; }';
     const head = document.head || document.getElementsByTagName('head')[0];
     this._style = document.createElement('style');
-
+    this._style.id = slugify(TextEditorPage.displayName);
     this._style.type = 'text/css';
     if (this._style.styleSheet) {
-      this._style.styleSheet.cssText = css;
+      this._style.styleSheet.cssText = scssString;
     } else {
-      this._style.appendChild(document.createTextNode(css));
+      this._style.appendChild(document.createTextNode(scssString));
     }
 
     head.appendChild(this._style);
@@ -144,7 +147,8 @@ class TextEditorPage extends React.Component {
     });
     editor.on('change', () => {
       onChange && onChange(editor, () => {
-        // if (!this.state.editorReady.includes('html') && !this.state.editorReady.includes('css')) {
+        // if (!this.state.editorReady.includes('html')
+        // && !this.state.editorReady.includes('css')) {
         //   return false;
         // }
         this.updateIframeContent();
@@ -160,8 +164,7 @@ class TextEditorPage extends React.Component {
     const css = this._css;
     if (bodyRegex.test(html)) {
       html = html.replace(bodyRegex, `<style type="text/css">${css}</style>\n</body>`);
-    }
-    else {
+    } else {
       html = `${html}<style type="text/css">${css}</style>`;
     }
 

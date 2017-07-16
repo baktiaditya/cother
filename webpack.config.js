@@ -3,6 +3,8 @@ const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const AssetsPlugin = require('assets-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const imageminMozjpeg = require('imagemin-mozjpeg');
 const pkg = require('./package.json');
 
 const isDebug = global.DEBUG;
@@ -28,7 +30,7 @@ const cssModuleParam = isModule => ({
 
 const cssLoader = {
   test: /\.css$/,
-  exclude: /\.mod\.css/
+  exclude: [/\.mod\.css/, /\.string\.css/]
 };
 
 const cssModLoader = {
@@ -37,7 +39,7 @@ const cssModLoader = {
 
 const scssLoader = {
   test: /\.scss$/,
-  exclude: /\.mod\.scss$/
+  exclude: [/\.mod\.scss$/, /\.string\.scss$/]
 };
 
 const scssModLoader = {
@@ -160,6 +162,14 @@ const config = {
       scssLoader,
       scssModLoader,
       {
+        test: /\.string\.css?$/,
+        loader: 'css-to-string-loader!css-loader'
+      },
+      {
+        test: /\.string\.scss?$/,
+        loader: 'css-to-string-loader!css-loader!sass-loader'
+      },
+      {
         test: /\.json$/,
         loader: 'json-loader'
       },
@@ -179,7 +189,7 @@ const config = {
         }
       },
       {
-        test: /\.txt$/,
+        test: /\.(html|txt)(\?.*)?$/,
         loader: 'raw-loader'
       }
     ]
@@ -209,6 +219,19 @@ if (isDebug) {
   }));
   config.plugins.push(new webpack.optimize.UglifyJsPlugin({ compress: { warnings: isVerbose } }));
   config.plugins.push(new webpack.optimize.AggressiveMergingPlugin());
+  config.plugins.push(
+    new ImageminPlugin({
+      optipng: {
+        optimizationLevel: 3
+      },
+      plugins: [
+        imageminMozjpeg({
+          quality: 95,
+          progressive: true
+        })
+      ]
+    })
+  );
 }
 
 // eslint-disable-next-line no-console

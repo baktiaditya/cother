@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import { hexPropTypes } from '../../shared/helpers';
+import { hexPropTypes } from '../../shared/utils';
 
 import actionIcons from './svg/action';
 import contentIcons from './svg/content';
@@ -19,7 +19,7 @@ import * as scss from './Icon.mod.scss';
  * component. Inline SVG has good browser support and by using it you can save HTTP requests, icons
  * are still cache-able and you can control them using CSS.
  */
-class Icon extends React.Component {
+class Icon extends Component {
   static propTypes = {
     className: PropTypes.string,
     color: hexPropTypes,
