@@ -7,14 +7,16 @@
   top: 0;
   left: 0;
   padding: 0 $grid-gutter-width;
+
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background-color: $header-bg-color;
   color: $header-color;
 
   .brand {
     display: flex;
-    color: $white;
+    color: $header-color;
     font-size: 18px;
     text-decoration: none;
     align-items: center;

@@ -30,10 +30,12 @@ class TextEditorPage extends React.Component {
     css: firebaseDb.ref(`${this._id}_css`)
   }
   _html = require('./defaultHtml.txt');
-  _css = '';
+  _css = require('./defaultCss.txt');
   _style;
 
   state = {
+    ready: false,
+    editorReady: [],
     showEditor: ['html', 'css'],
     showIframeMask: false
   }
@@ -71,6 +73,7 @@ class TextEditorPage extends React.Component {
     this._firepad.html = window.Firepad.fromACE(this._firepadRef.html, this._editor.html, {
       defaultText: this._html
     });
+    this._firepad.html.on('ready', () => this.setState({ editorReady: [...this.state.editorReady, 'html'] }));
 
     this._editor.css = this.createTextEditor({
       targetDomId: 'css',
@@ -82,8 +85,9 @@ class TextEditorPage extends React.Component {
     });
 
     this._firepad.css = window.Firepad.fromACE(this._firepadRef.css, this._editor.css, {
-      defaultText: '/* CSS */'
+      defaultText: this._css
     });
+    this._firepad.css.on('ready', () => this.setState({ editorReady: [...this.state.editorReady, 'css'] }));
   }
 
   componentWillUnmount() {
@@ -140,7 +144,9 @@ class TextEditorPage extends React.Component {
   render() {
     return (
       <Base>
-        <Header />
+        <Header
+          isLoading={!this.state.editorReady.includes('html') && !this.state.editorReady.includes('css')}
+        />
 
         <Row>
           {/* HTML */}
