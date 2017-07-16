@@ -4,7 +4,11 @@ body {
   padding-top: $header-height;
 }
 
-body, html, #__container, #base, [data-reactroot] {
+body,
+html,
+#__container,
+#base,
+[data-reactroot] {
   height: 100%;
 }
 

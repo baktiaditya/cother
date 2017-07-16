@@ -1,4 +1,4 @@
-@import '../../shared/variables';
+@import "../../shared/variables";
 
 .resizeable {
   display: flex;
@@ -7,6 +7,7 @@
   &.resizeable-type-row {
     flex-flow: row wrap;
   }
+
   &.resizeable-type-column {
     flex-flow: column wrap;
   }
@@ -22,10 +23,12 @@
     max-width: 100%;
     min-height: 1px;
   }
+
   &.cell-type-column {
     max-height: 100%;
     min-width: 1px;
   }
+
   &.cell-hide {
     display: none;
   }
@@ -34,9 +37,9 @@
 .splitter {
   position: relative;
 
-  &:after {
-    content: '';
+  &::after {
     position: absolute;
+    content: "";
     top: 0;
     z-index: 10;
     background-color: lighten($header-bg-color, 5%);
@@ -44,11 +47,11 @@
 }
 
 .splitter-horizontal {
-  background: url('../../shared/assets/hsizegrip.png') center center no-repeat $header-bg-color;
+  background: url("../../shared/assets/hsizegrip.png") center center no-repeat $header-bg-color;
   cursor: row-resize;
   z-index: 10;
 
-  &:after {
+  &::after {
     left: 0;
     height: 1px;
     width: 100%;
@@ -56,11 +59,11 @@
 }
 
 .splitter-vertical {
-  background: url('../../shared/assets/vsizegrip.png') center center no-repeat $header-bg-color;
+  background: url("../../shared/assets/vsizegrip.png") center center no-repeat $header-bg-color;
   cursor: col-resize;
   z-index: 10;
 
-  &:after {
+  &::after {
     right: 0;
     width: 1px;
     height: 100%;

@@ -27,3 +27,7 @@ export function hexPropTypes(props, propName, componentName) {
 export function slugify(string) {
   return _.snakeCase(string).replace(/_/g, '-');
 }
+
+export const isBrowser = !!((typeof window !== 'undefined' && window.document && window.document.createElement));
+export const isSafari = isBrowser ? window.navigator.vendor && window.navigator.vendor.indexOf('Apple') > -1 &&
+  window.navigator.userAgent && !window.navigator.userAgent.match('CriOS') : false;

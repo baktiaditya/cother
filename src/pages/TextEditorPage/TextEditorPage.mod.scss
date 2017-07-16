@@ -5,26 +5,12 @@
   margin-bottom: 20px;
 }
 
-.row {
-  height: 100%;
-}
-
-.cell {
-  height: 100%;
-}
-
 .editor-container {
   width: 100%;
   height: 100%;
-  font-family: 'Monaco', 'Menlo', 'Consolas', "Vera Mono", monospace;
+  font-family: "Monaco", "Menlo", "Consolas", "Vera Mono", monospace;
   font-size: 13px;
   background-color: $header-bg-color;
-}
-
-.ratio {
-  display: block;
-  width: 100%;
-  height: auto;
 }
 
 .iframe-mask {

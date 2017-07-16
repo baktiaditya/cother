@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { ResizeSensor } from 'css-element-queries';
 import classNames from 'classnames/bind';
+import { isSafari } from '../../shared/utils';
 import scss from './ResizeableGrid.mod.scss';
 
 class Cell extends Component {
@@ -41,19 +42,17 @@ class Cell extends Component {
     } = this.props;
     delete props.onDimensionChange;
 
-    let combinedStyle = style;
+    const componentStyle = {};
     if (type === 'row') {
-      combinedStyle = {
-        flex: `0 0 ${width}px`,
-        maxWidth: width,
-        ...style
-      };
+      componentStyle.flex = `0 0 ${width}px`;
+      componentStyle.maxWidth = width;
     } else {
-      combinedStyle = {
-        flex: `0 0 ${height}px`,
-        maxHeight: height,
-        ...style
-      };
+      componentStyle.flex = `0 0 ${height}px`;
+      componentStyle.maxHeight = height;
+    }
+
+    if (isSafari) {
+      componentStyle.height = '100%';
     }
 
     const cx = classNames.bind(scss);
@@ -69,7 +68,7 @@ class Cell extends Component {
         {...props}
         ref={c => (this._ref = c)}
         className={classes}
-        style={combinedStyle}
+        style={{ ...componentStyle, ...style }}
       />
     );
   }

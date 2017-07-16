@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
+import { isSafari } from '../../shared/utils';
 import scss from './ResizeableGrid.mod.scss';
 
 class Resizeable extends Component {
@@ -59,18 +60,21 @@ class Resizeable extends Component {
       `resizeable-type-${type}`
     );
 
-    const combinedStyle = {
+    const componentStyle = {
       minHeight: this.props.height || '100%',
-      maxHeight: this.props.height || '100%',
-      ...style
+      maxHeight: this.props.height || '100%'
     };
+
+    if (isSafari) {
+      componentStyle.height = '100%';
+    }
 
     return (
       <div
         {...props}
         ref={c => (this._ref = c)}
         className={classes}
-        style={combinedStyle}
+        style={{ ...componentStyle, ...style }}
         data-style='display: flex;'
       >
         {this.renderChildren(children, type)}

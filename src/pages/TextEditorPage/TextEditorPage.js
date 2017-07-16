@@ -273,10 +273,9 @@ class TextEditorPage extends Component {
           isLoading={!this.state.editorReady.includes('html') && !this.state.editorReady.includes('css')}
         />
 
-        <Row className={scss['row']}>
+        <Row>
           {/* HTML */}
           <Cell
-            className={scss['cell']}
             hide={!this.state.showEditor.includes('html')}
             onDimensionChange={() => this._editor.html && this._editor.html.resize()}
           >
@@ -291,7 +290,6 @@ class TextEditorPage extends Component {
 
           {/* CSS */}
           <Cell
-            className={scss['cell']}
             hide={!this.state.showEditor.includes('css')}
             onDimensionChange={() => this._editor.css && this._editor.css.resize()}
           >
@@ -305,7 +303,7 @@ class TextEditorPage extends Component {
           />
 
           {/* iFrame */}
-          <Cell className={scss['cell']}>
+          <Cell>
             {/* Use mask to prevent Splitter drag error */}
             {this.state.showIframeMask && <div className={scss['iframe-mask']} />}
             <iframe

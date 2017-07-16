@@ -1,4 +1,4 @@
-@import '../../shared/variables';
+@import "../../shared/variables";
 
 .dotted {
   position: relative;
@@ -80,7 +80,7 @@
 
   &::before {
     position: absolute;
-    content: '';
+    content: "";
     box-sizing: border-box;
     top: 50%;
     left: 50%;
