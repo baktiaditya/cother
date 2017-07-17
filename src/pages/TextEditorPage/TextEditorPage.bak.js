@@ -11,7 +11,7 @@ import defaultHtml from './templates/defaultHtml.html';
 
 // Components
 import Base from '../../components/Base/Base';
-import Iframe, { IframeContent } from '../../components/Iframe/Iframe';
+import Iframe, { IframeContent } from '../../components/IframeOld/Iframe';
 import { Row, Cell, Splitter } from '../../components/ResizeableGrid/ResizeableGrid';
 
 class TextEditorPage extends React.Component {

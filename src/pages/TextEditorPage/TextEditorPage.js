@@ -11,6 +11,7 @@ import scssString from './TextEditorPage.string.scss';
 import Base from '../../components/Base/Base';
 import Header from '../../components/Header/Header';
 import { Row, Cell, Splitter } from '../../components/ResizeableGrid/ResizeableGrid';
+import Iframe from '../../components/Iframe/Iframe';
 
 class TextEditorPage extends Component {
   static displayName = 'TextEditorPage';
@@ -26,27 +27,29 @@ class TextEditorPage extends Component {
     html: null,
     css: null
   };
-  _firepad = {
-    html: null,
-    css: null
-  };
-  _firepadRef = {
-    // DB ref
-    html: firebaseDb.ref(`documents-no-owner/${this._id}/html`),
-    css: firebaseDb.ref(`documents-no-owner/${this._id}/css`)
-  }
-  _html = require('./templates/defaultHtml.html');
-  _css = require('./templates/defaultCss.string.css');
+  _firepad = {};
+  _firepadRef = {}
+  _htmlDefaultText = require('./templates/defaultHtml.html');
+  _cssDefaultText = require('./templates/defaultCss.string.css');
   _style;
-  _editorChangedTimeout;
 
   state = {
     editorReady: [],
     showEditor: ['html', 'css'],
-    showIframeMask: false
+    showIframeMask: false,
+    html: '',
+    css: ''
   }
 
   componentWillMount() {
+    Object.keys(this._editor).forEach(editor => {
+      this._firepad[editor] = null;
+    });
+    // Database
+    Object.keys(this._editor).forEach(editor => {
+      this._firepadRef[editor] = firebaseDb.ref(`documents-no-owner/${this._id}/${editor}`);
+    });
+
     // Page title
     const titleTag = document.getElementsByTagName('title')[0];
     titleTag.innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} ${this._id}`;
@@ -69,48 +72,35 @@ class TextEditorPage extends Component {
     this._editor.html = this.createTextEditor({
       targetDomId: 'html',
       mode: 'html',
-      onChange: (editor, callback) => {
-        this._html = editor.getValue();
-
-        if (this._editorChangedTimeout) {
-          clearTimeout(this._editorChangedTimeout);
-        }
-        this._editorChangedTimeout = setTimeout(callback, 50);
+      onChange: (editor) => {
+        this.setState({
+          html: editor.getValue()
+        });
       }
     });
 
     this._firepad.html = window.Firepad.fromACE(this._firepadRef.html, this._editor.html, {
       userId: this._userId,
-      defaultText: this._html
+      defaultText: this._htmlDefaultText
     });
     this._firepad.html.on('ready', () => this.setState({ editorReady: [...this.state.editorReady, 'html'] }));
 
     this._editor.css = this.createTextEditor({
       targetDomId: 'css',
       mode: 'css',
-      onChange: (editor, callback) => {
-        this._css = editor.getValue();
-
-        if (this._editorChangedTimeout) {
-          clearTimeout(this._editorChangedTimeout);
-        }
-        this._editorChangedTimeout = setTimeout(callback, 50);
+      onChange: (editor) => {
+        this.setState({
+          css: editor.getValue()
+        });
       }
     });
 
     this._firepad.css = window.Firepad.fromACE(this._firepadRef.css, this._editor.css, {
       userId: this._userId,
-      defaultText: this._css
+      defaultText: this._cssDefaultText
     });
     this._firepad.css.on('ready', () => this.setState({ editorReady: [...this.state.editorReady, 'css'] }));
   }
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   if ((JSON.stringify(prevState.editorReady) !== JSON.stringify(this.state.editorReady))
-  //     && (this.state.editorReady.includes('html') && this.state.editorReady.includes('css'))) {
-  //     this.updateIframeContent();
-  //   }
-  // }
 
   componentWillUnmount() {
     // Destroy Ace editor
@@ -147,122 +137,10 @@ class TextEditorPage extends Component {
       theme: 'ace/theme/tomorrow_night'
     });
     editor.on('change', () => {
-      onChange && onChange(editor, () => {
-        // if (!this.state.editorReady.includes('html')
-        // && !this.state.editorReady.includes('css')) {
-        //   return false;
-        // }
-        this.updateIframeContent();
-      });
+      onChange && onChange(editor);
     });
 
     return editor;
-  }
-
-  updateIframeContent() {
-    const bodyRegex = /<\/body>(?![\s\S]*<\/body>[\s\S]*$)/i; // find closing body tag
-    let html = this._html;
-    const css = this._css;
-    if (bodyRegex.test(html)) {
-      html = html.replace(bodyRegex, `<style type="text/css">${css}</style>\n</body>`);
-    } else {
-      html = `${html}<style type="text/css">${css}</style>`;
-    }
-
-    const iframe = document.getElementById(scss['iframe']);
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-    const iframeHead = iframeDoc.head;
-    const iframeBody = iframeDoc.body;
-
-    // Do Firefox-related activities
-    const { scriptsArr, scriptsSrcArr } = this.extractScript(html);
-    // console.log('scriptsArr', scriptsArr);
-    // console.log('scriptsSrcArr', scriptsSrcArr);
-
-    const SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-    while (SCRIPT_REGEX.test(html)) {
-      html = html.replace(SCRIPT_REGEX, '');
-    }
-    // console.log('html', html);
-
-    const head = html.match(/<head[^>]*>[\s\S]*<\/head>/gi);
-    const body = html.match(/<body[^>]*>[\s\S]*<\/body>/gi);
-    // console.log('head', head);
-    // console.log('body', body);
-
-    iframeHead.innerHTML = head;
-    iframeBody.innerHTML = body;
-
-    if (scriptsSrcArr.length > 0) {
-      scriptsSrcArr.forEach((src, num) => {
-        if (num === (scriptsSrcArr.length - 1)) {
-          this.loadIframeScriptSrc(iframeDoc, src, () => {
-            if (scriptsArr.length > 0) {
-              scriptsArr.forEach((script) => {
-                this.loadIframeScriptInline(iframeDoc, script);
-              });
-            }
-          });
-        } else {
-          this.loadIframeScriptSrc(iframeDoc, src);
-        }
-      });
-    } else {
-      if (scriptsArr.length > 0) {
-        scriptsArr.forEach((script) => {
-          this.loadIframeScriptInline(iframeDoc, script);
-        });
-      }
-    }
-  }
-
-  extractScript(code) {
-    const div = document.createElement('div');
-    div.setAttribute('id', 'fake');
-    div.innerHTML = code;
-    const scripts = div.getElementsByTagName('script');
-    const scriptsArr = [];
-    const scriptsSrcArr = [];
-    for (let i = 0; i < scripts.length; i++) {
-      if (scripts[i].src) {
-        scriptsSrcArr.push(scripts[i].src);
-      }
-      if (scripts[i].innerHTML) {
-        scriptsArr.push(scripts[i].innerHTML);
-      }
-    }
-
-    return {
-      scriptsArr,
-      scriptsSrcArr
-    };
-  }
-
-  loadIframeScriptSrc(iframeDoc, src, callback) {
-    let r = false;
-    const s = iframeDoc.createElement('script');
-    s.type = 'text/javascript';
-    s.src = src;
-    s.onload = s.onreadystatechange = () => {
-      // console.log(this.readyState); // uncomment this line to see which ready states are called.
-      if (!r && (!this.readyState || this.readyState === 'complete')) {
-        r = true;
-        callback && callback();
-      }
-    };
-    iframeDoc.getElementsByTagName('body')[0].appendChild(s);
-  }
-
-  loadIframeScriptInline(iframeDoc, script) {
-    const s = iframeDoc.createElement('script');
-    s.type = 'text/javascript';
-    try {
-      s.appendChild(iframeDoc.createTextNode(script));
-      iframeDoc.body.appendChild(s);
-    } catch (e) {
-      s.text = script;
-      iframeDoc.body.appendChild(s);
-    }
   }
 
   render() {
@@ -307,8 +185,9 @@ class TextEditorPage extends Component {
           <Cell>
             {/* Use mask to prevent Splitter drag error */}
             {this.state.showIframeMask && <div className={scss['iframe-mask']} />}
-            <iframe
-              id={scss['iframe']}
+            <Iframe
+              html={this.state.html}
+              css={this.state.css}
               frameBorder={0}
               scrolling='yes'
               allowFullScreen

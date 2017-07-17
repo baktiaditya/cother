@@ -212,7 +212,7 @@ if (isDebug) {
   );
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
 } else {
-  // Optimize the bundle in release (production) mode
+  // Optimize the bundle in production mode
   config.plugins.push(new ExtractTextPlugin({
     filename: '[name].[hash].css',
     allChunks: true

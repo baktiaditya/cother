@@ -1,145 +1,159 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import * as _ from 'lodash';
-import DocumentContext from './DocumentContext';
-
-const hasConsole = typeof window !== 'undefined' && window.console;
-const noop = () => {};
-let swallowInvalidHeadWarning = noop;
-let resetWarnings = noop;
-
-if (hasConsole) {
-  const originalError = console.error; // eslint-disable-line no-console
-  // Rendering a <head> into a body is technically invalid although it
-  // works. We swallow React's validateDOMNesting warning if that is the
-  // message to avoid confusion
-  swallowInvalidHeadWarning = () => {
-    console.error = (msg) => {  // eslint-disable-line no-console
-      if (/<head>/.test(msg)) return;
-      originalError.call(console, msg);
-    };
-  };
-  resetWarnings = () => (console.error = originalError);  // eslint-disable-line no-console
-}
+import scss from './Iframe.mod.scss';
 
 class Iframe extends Component {
-  // React warns when you render directly into the body since browser extensions
-  // also inject into the body and can mess up React. For this reason
-  // initialContent is expected to have a div inside of the body
-  // element that we render react into.
   static propTypes = {
-    style: PropTypes.object, // eslint-disable-line
-    head: PropTypes.node,
-    initialContent: PropTypes.string,
-    mountTarget: PropTypes.string,
-    contentDidMount: PropTypes.func,
-    contentDidUpdate: PropTypes.func,
-    children: PropTypes.oneOfType([
-      PropTypes.element,
-      PropTypes.arrayOf(PropTypes.element)
-    ])
+    html: PropTypes.string,
+    css: PropTypes.string
   }
 
   static defaultProps = {
-    style: {},
-    head: null,
-    children: undefined,
-    mountTarget: undefined,
-    contentDidMount: () => {},
-    contentDidUpdate: () => {},
-    initialContent: '<!DOCTYPE html><html><head></head><body><div class="frame-root"></div></body></html>'
+    html: '',
+    css: ''
   }
 
-  constructor(props, context) {
-    super(props, context);
-    this._isMounted = false;
-  }
+  _elemRef;
+  _mounted = false;
 
   componentDidMount() {
-    this._isMounted = true;
-    this.renderFrameContents();
+    this._mounted = true;
+    this.updateContent();
   }
 
-  componentDidUpdate() {
-    this.renderFrameContents();
+  componentDidUpdate(prevProps, prevState) {
+    if (this._mounted) {
+      this.updateContent();
+    }
   }
 
   componentWillUnmount() {
-    this._isMounted = false;
-    const doc = this.getDoc();
-    if (doc) {
-      ReactDOM.unmountComponentAtNode(this.getMountTarget());
-    }
+    this._mounted = false;
   }
 
-  getDoc() {
-    return ReactDOM.findDOMNode(this).contentDocument; // eslint-disable-line
+  shouldComponentUpdate(nextProps, nextState) {
+    return (this.props.html !== nextProps.html) || (this.props.css !== nextProps.css);
   }
 
-  getMountTarget() {
-    const doc = this.getDoc();
-    if (this.props.mountTarget) {
-      return doc.querySelector(this.props.mountTarget);
-    }
-    return doc.body.children[0];
-  }
+  updateContent() {
+    const iframe = ReactDOM.findDOMNode(this._elemRef);
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    const iframeHead = iframeDoc.head;
+    const iframeBody = iframeDoc.body;
 
-  renderFrameContents() {
-    if (!this._isMounted) {
-      return;
-    }
-
-    const doc = this.getDoc();
-    if (doc && doc.readyState === 'complete') {
-      if (doc.querySelector('div') === null) {
-        this._setInitialContent = false;
-      }
-
-      const win = doc.defaultView || doc.parentView;
-      const initialRender = !this._setInitialContent;
-      const contents = (
-        <DocumentContext document={doc} window={win}>
-          <div className='frame-content'>
-            {this.props.head}
-            {this.props.children}
-          </div>
-        </DocumentContext>
-      );
-
-      if (initialRender) {
-        doc.open('text/html', 'replace');
-        doc.write(this.props.initialContent);
-        doc.close();
-        this._setInitialContent = true;
-      }
-
-      swallowInvalidHeadWarning();
-
-      // unstable_renderSubtreeIntoContainer allows us to pass this component as
-      // the parent, which exposes context to any child components.
-      const callback = initialRender ? this.props.contentDidMount : this.props.contentDidUpdate;
-      const mountTarget = this.getMountTarget();
-
-      ReactDOM.unstable_renderSubtreeIntoContainer(this, contents, mountTarget, callback);
-      resetWarnings();
+    const bodyRegex = /<\/body>(?![\s\S]*<\/body>[\s\S]*$)/i; // find closing body tag
+    let html = this.props.html;
+    const css = this.props.css;
+    if (bodyRegex.test(html)) {
+      html = html.replace(bodyRegex, `<style type="text/css">${css}</style>\n</body>`);
     } else {
-      setTimeout(this.renderFrameContents.bind(this), 0);
+      html = `${html}<style type="text/css">${css}</style>`;
+    }
+
+    // Extract <script /> tag from html
+    const { scriptsArr, scriptsSrcArr } = this.extractScript(html);
+
+    // Remove <script /> tag from html
+    const scriptRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+    while (scriptRegex.test(html)) {
+      html = html.replace(scriptRegex, '');
+    }
+
+    const head = html.match(/<head[^>]*>[\s\S]*<\/head>/gi);
+    const body = html.match(/<body[^>]*>[\s\S]*<\/body>/gi);
+
+    // Set iframe content
+    iframeHead.innerHTML = head;
+    iframeBody.innerHTML = body;
+
+    if (scriptsSrcArr.length > 0) {
+      scriptsSrcArr.forEach((src, num) => {
+        if (num === (scriptsSrcArr.length - 1)) {
+          this.loadIframeScriptSrc(iframeDoc, src, () => {
+            if (scriptsArr.length > 0) {
+              scriptsArr.forEach((script) => {
+                this.loadIframeScriptInline(iframeDoc, script);
+              });
+            }
+          });
+        } else {
+          this.loadIframeScriptSrc(iframeDoc, src);
+        }
+      });
+    } else {
+      if (scriptsArr.length > 0) {
+        scriptsArr.forEach((script) => {
+          this.loadIframeScriptInline(iframeDoc, script);
+        });
+      }
+    }
+  }
+
+  extractScript(html) {
+    const div = document.createElement('div');
+    div.setAttribute('id', 'fake');
+    div.innerHTML = html;
+    const scripts = div.getElementsByTagName('script');
+    const scriptsArr = [];
+    const scriptsSrcArr = [];
+    for (let i = 0; i < scripts.length; i++) {
+      if (scripts[i].src) {
+        scriptsSrcArr.push(scripts[i].src);
+      }
+      if (scripts[i].innerHTML) {
+        scriptsArr.push(scripts[i].innerHTML);
+      }
+    }
+
+    return {
+      scriptsArr,
+      scriptsSrcArr
+    };
+  }
+
+  loadIframeScriptSrc(iframeDoc, src, callback) {
+    let r = false;
+    const s = iframeDoc.createElement('script');
+    s.type = 'text/javascript';
+    s.src = src;
+    s.onload = s.onreadystatechange = () => {
+      // console.log(this.readyState); // uncomment this line to see which ready states are called.
+      if (!r && (!this.readyState || this.readyState === 'complete')) {
+        r = true;
+        callback && callback();
+      }
+    };
+    iframeDoc.getElementsByTagName('body')[0].appendChild(s);
+  }
+
+  loadIframeScriptInline(iframeDoc, script) {
+    const s = iframeDoc.createElement('script');
+    s.type = 'text/javascript';
+    try {
+      s.appendChild(iframeDoc.createTextNode(script));
+      iframeDoc.body.appendChild(s);
+    } catch (e) {
+      s.text = script;
+      iframeDoc.body.appendChild(s);
     }
   }
 
   render() {
     const {
       ...props
-    } = _.omit(this.props, [
-      'children', 'head', 'initialContent', 'mountTarget', 'contentDidMount', 'contentDidUpdate'
-    ]);
+    } = this.props;
+    delete props.html;
+    delete props.css;
 
     return (
-      <iframe {...props} />
+      <iframe
+        {...props}
+        className={scss['iframe']}
+        ref={c => (this._elemRef = c)}
+      />
     );
   }
 }
 
 export default Iframe;
-export { IframeContent } from './IframeContent';
