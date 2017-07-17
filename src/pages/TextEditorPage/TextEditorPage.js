@@ -31,8 +31,9 @@ class TextEditorPage extends Component {
     css: null
   };
   _firepadRef = {
-    html: firebaseDb.ref(`${this._id}/html`),
-    css: firebaseDb.ref(`${this._id}/css`)
+    // DB ref
+    html: firebaseDb.ref(`documents-no-owner/${this._id}/html`),
+    css: firebaseDb.ref(`documents-no-owner/${this._id}/css`)
   }
   _html = require('./templates/defaultHtml.html');
   _css = require('./templates/defaultCss.string.css');
