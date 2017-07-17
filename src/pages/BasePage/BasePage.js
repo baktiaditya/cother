@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { slugify } from '../../shared/utils';
-import scss from './Base.string.scss';
+import scss from './BasePage.string.scss';
 
-class Base extends Component {
-  static displayName = 'Base';
+class BasePage extends Component {
+  static displayName = 'BasePage';
 
   static propTypes = {
     children: PropTypes.node
@@ -13,10 +13,12 @@ class Base extends Component {
   _style;
 
   componentWillMount() {
+    console.log(this.props);
+
     // Create custom <style /> in <head />
     const head = document.head || document.getElementsByTagName('head')[0];
     this._style = document.createElement('style');
-    this._style.id = slugify(Base.displayName);
+    this._style.id = slugify(BasePage.displayName);
     this._style.type = 'text/css';
     if (this._style.styleSheet) {
       this._style.styleSheet.cssText = scss;
@@ -34,15 +36,10 @@ class Base extends Component {
   }
 
   render() {
-    const {
-      children,
-      ...props
-    } = this.props;
-
     return (
-      <div id='base' {...props}>{children}</div>
+      <div>{this.props.children}</div>
     );
   }
 }
 
-export default Base;
+export default BasePage;

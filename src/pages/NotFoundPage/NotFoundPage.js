@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import scss from './NotFoundPage.mod.scss';
-import Base from '../../components/Base/Base';
 
 class ErrorPage extends Component {
   _style;
@@ -36,11 +35,11 @@ class ErrorPage extends Component {
 
   render() {
     return (
-      <Base>
+      <div>
         <h1 className={scss['headline']}>{this._pageTitle}</h1>
         <p className={scss['caption']}>Sorry, but the page you were trying to view does not
           exist.</p>
-      </Base>
+      </div>
     );
   }
 }

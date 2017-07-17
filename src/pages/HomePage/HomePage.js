@@ -5,9 +5,6 @@ import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import { generateRandomString } from '../../shared/utils';
 import scss from './HomePage.mod.scss';
 
-// Components
-import Base from '../../components/Base/Base';
-
 class HomePage extends Component {
   componentWillMount() {
     // Page title
@@ -17,13 +14,13 @@ class HomePage extends Component {
 
   render() {
     return (
-      <Base>
+      <div>
         <Link className={scss['link']} to={`/${generateRandomString(20)}`}>Create New</Link>
         <br />
         <Link className={scss['link']} to={`/${generateRandomString(20)}`}>
           <img className={scss['img']} src={require('./cookie.jpg')} alt='hehe' width={310} />
         </Link>
-      </Base>
+      </div>
     );
   }
 }

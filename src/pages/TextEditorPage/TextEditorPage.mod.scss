@@ -1,8 +1,8 @@
 @import "../../shared/variables";
 
-.link {
-  display: inline-block;
-  margin-bottom: 20px;
+.container {
+  width: 100%;
+  height: 100%;
 }
 
 .editor-container {
@@ -20,10 +20,4 @@
   bottom: 0;
   right: 0;
   background: transparent;
-}
-
-#iframe {
-  display: block;
-  width: 100%;
-  height: 100%;
 }

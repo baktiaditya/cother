@@ -35,8 +35,11 @@
   }
 }
 
-.user-list {
+.user-list-indicator {
+  display: flex;
+  align-items: center;
   font-family: "Montserrat", sans-serif;
   font-weight: 300;
   font-size: .8125rem;
 }
+

@@ -1,6 +1,7 @@
 /* eslint no-console:0, no-eval:0, no-param-reassign:0 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { firebaseDb } from '../../shared/firebase';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import { slugify } from '../../shared/utils';
@@ -8,7 +9,6 @@ import scss from './TextEditorPage.mod.scss';
 import scssString from './TextEditorPage.string.scss';
 
 // Components
-import Base from '../../components/Base/Base';
 import Header from '../../components/Header/Header';
 import { Row, Cell, Splitter } from '../../components/ResizeableGrid/ResizeableGrid';
 import Iframe from '../../components/Iframe/Iframe';
@@ -22,7 +22,10 @@ class TextEditorPage extends Component {
   }
 
   _id = this.props.params.id;
+  _dbPrefix = `documents-no-owner/${this._id}`;
   _userId = Math.floor(Math.random() * 9999999999).toString();
+  _userRef = firebaseDb.ref(`${this._dbPrefix}/presence/${this._userId}`);
+  _displayName = `Guest ${Math.floor(Math.random() * 1000)}`;
   _editor = {
     html: null,
     css: null
@@ -34,6 +37,8 @@ class TextEditorPage extends Component {
   _style;
 
   state = {
+    user: {},
+    userList: {},
     editorReady: [],
     showEditor: ['html', 'css'],
     showIframeMask: false,
@@ -42,12 +47,24 @@ class TextEditorPage extends Component {
   }
 
   componentWillMount() {
-    Object.keys(this._editor).forEach(editor => {
-      this._firepad[editor] = null;
-    });
     // Database
     Object.keys(this._editor).forEach(editor => {
-      this._firepadRef[editor] = firebaseDb.ref(`documents-no-owner/${this._id}/${editor}`);
+      this._firepadRef[editor] = firebaseDb.ref(`${this._dbPrefix}/${editor}`);
+    });
+    this._userRef.onDisconnect().remove();
+    this._userRef.getParent().on('value', (snapshot) => {
+      if (snapshot.val()) {
+        this.setState({
+          userList: snapshot.val()
+        }, () => {
+          // console.log('users', snapshot.val());
+        });
+      }
+    });
+
+    // Editor
+    Object.keys(this._editor).forEach(editor => {
+      this._firepad[editor] = null;
     });
 
     // Page title
@@ -73,9 +90,11 @@ class TextEditorPage extends Component {
       targetDomId: 'html',
       mode: 'html',
       onChange: (editor) => {
-        this.setState({
-          html: editor.getValue()
-        });
+        if (this.state.html !== editor.getValue()) {
+          this.setState({
+            html: editor.getValue()
+          });
+        }
       }
     });
 
@@ -83,15 +102,25 @@ class TextEditorPage extends Component {
       userId: this._userId,
       defaultText: this._htmlDefaultText
     });
-    this._firepad.html.on('ready', () => this.setState({ editorReady: [...this.state.editorReady, 'html'] }));
+    this._firepad.html.on('ready', () => this.setState({
+      // set user
+      user: {
+        id: this._userId,
+        color: this._firepad.html.firebaseAdapter_.color_,
+        displayName: this._displayName
+      },
+      editorReady: [...this.state.editorReady, 'html']
+    }));
 
     this._editor.css = this.createTextEditor({
       targetDomId: 'css',
       mode: 'css',
       onChange: (editor) => {
-        this.setState({
-          css: editor.getValue()
-        });
+        if (this.state.css !== editor.getValue()) {
+          this.setState({
+            css: editor.getValue()
+          });
+        }
       }
     });
 
@@ -100,6 +129,15 @@ class TextEditorPage extends Component {
       defaultText: this._cssDefaultText
     });
     this._firepad.css.on('ready', () => this.setState({ editorReady: [...this.state.editorReady, 'css'] }));
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (JSON.stringify(this.state.user) !== JSON.stringify(nextState.user)) {
+      this._userRef.set({
+        displayName: nextState.user.displayName,
+        color: nextState.user.color
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -112,6 +150,10 @@ class TextEditorPage extends Component {
     Object.keys(this._firepad).forEach(key => {
       this._firepad[key].dispose();
     });
+
+    // Destroy and unlisten user db
+    this._userRef.getParent().off('value');
+    this._userRef.remove();
 
     // Remove custom <style /> in <head />
     const head = document.head || document.getElementsByTagName('head')[0];
@@ -144,13 +186,19 @@ class TextEditorPage extends Component {
   }
 
   render() {
+    const {
+      editorReady,
+      userList
+    } = this.state;
+
+    const headerProps = {
+      isLoading: !editorReady.includes('html') && !editorReady.includes('css'),
+      totalUsers: !_.isEmpty(userList) ? Object.keys(userList).length : 0
+    };
+
     return (
-      <Base>
-        <Header
-          firepadRef={this._firepadRef.html}
-          userId={this._userId}
-          isLoading={!this.state.editorReady.includes('html') && !this.state.editorReady.includes('css')}
-        />
+      <div className={scss['container']}>
+        <Header {...headerProps} />
 
         <Row>
           {/* HTML */}
@@ -161,7 +209,6 @@ class TextEditorPage extends Component {
             <div id='html' className={scss['editor-container']} />
           </Cell>
           <Splitter
-            className={scss['splitter']}
             hide={!this.state.showEditor.includes('html')}
             onDragStart={() => this.setState({ showIframeMask: true })}
             onDragStop={() => this.setState({ showIframeMask: false })}
@@ -175,7 +222,6 @@ class TextEditorPage extends Component {
             <div id='css' className={scss['editor-container']} />
           </Cell>
           <Splitter
-            className={scss['splitter']}
             hide={!this.state.showEditor.includes('css')}
             onDragStart={() => this.setState({ showIframeMask: true })}
             onDragStop={() => this.setState({ showIframeMask: false })}
@@ -194,7 +240,7 @@ class TextEditorPage extends Component {
             />
           </Cell>
         </Row>
-      </Base>
+      </div>
     );
   }
 }

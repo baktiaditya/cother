@@ -2,30 +2,24 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import Loader from '../Loader/Loader';
-import UserList from '../UserList/UserList';
+import Icon from '../Icon/Icon';
 import scss from './Header.mod.scss';
 
 class Header extends Component {
   static propTypes = {
     brand: PropTypes.string,
     isLoading: PropTypes.bool,
-
-    //------
-    firepadRef: PropTypes.object.isRequired,
-    userId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-    displayName: PropTypes.string
+    totalUsers: PropTypes.number
   }
 
   static defaultProps = {
-    brand: 'Cother'
+    brand: 'Cother',
+    totalUsers: 0
   }
 
   render() {
     const {
       brand,
-      displayName,
-      firepadRef,
-      userId,
       isLoading
     } = this.props;
 
@@ -41,12 +35,9 @@ class Header extends Component {
         {isLoading
           ? <Loader />
           : (
-            <UserList
-              firepadRef={firepadRef}
-              userId={userId}
-              displayName={displayName}
-              className={scss['user-list']}
-            />
+            <div className={scss['user-list-indicator']}>
+              {this.props.totalUsers}&nbsp;&nbsp;<Icon size={20} icon='remove-red-eye' />
+            </div>
           )
         }
       </div>

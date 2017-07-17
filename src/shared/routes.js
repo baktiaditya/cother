@@ -1,4 +1,5 @@
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
+import BasePage from '../pages/BasePage/BasePage';
 import HomePage from '../pages/HomePage/HomePage';
 import TextEditorPage from '../pages/TextEditorPage/TextEditorPage';
 
@@ -13,11 +14,14 @@ export default [
   },
   {
     path: '/',
-    component: HomePage
-  },
-  {
-    path: '/:id',
-    component: TextEditorPage
+    component: BasePage,
+    indexRoute: { component: HomePage },
+    childRoutes: [
+      {
+        path: ':id',
+        component: TextEditorPage
+      }
+    ]
   },
   {
     path: '*',
