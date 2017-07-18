@@ -1,0 +1,33 @@
+@import "../../shared/sass/variables";
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: $footer-height;
+  background-color: $header-bg-color;
+  color: $gray-lighter;
+  font-size: .8125rem;
+  font-weight: 200;
+
+  .footer-inner {
+    opacity: .85;
+  }
+
+  a {
+    color: $white;
+    font-weight: 300;
+  }
+}
+
+.footer-fixed {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.footer-normal {
+  position: relative;
+  width: 100%;
+}

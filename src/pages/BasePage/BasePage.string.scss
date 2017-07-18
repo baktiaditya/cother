@@ -1,13 +1,26 @@
+@import "../../shared/sass/mixins";
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  @include font-subpixel;
 }
 
 html,
 body {
-  font-family: sans-serif;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  font-weight: 300;
   line-height: 1.2;
+}
+
+a {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 h3 {

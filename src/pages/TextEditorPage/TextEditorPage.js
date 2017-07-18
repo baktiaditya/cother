@@ -81,7 +81,6 @@ class TextEditorPage extends Component {
     } else {
       this._style.appendChild(document.createTextNode(scssString));
     }
-
     head.appendChild(this._style);
   }
 
