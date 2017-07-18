@@ -117,7 +117,7 @@ if (isDebug) {
 const config = {
   entry: {
     main: [
-      'es6-promise',
+      'babel-polyfill',
       './src/index'
     ]
   },

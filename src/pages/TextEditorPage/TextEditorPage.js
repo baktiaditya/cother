@@ -92,6 +92,29 @@ class TextEditorPage extends Component {
       targetDom: ReactDOM.findDOMNode(this._htmlRef),
       mode: 'html',
       onChange: (editor) => {
+        /* const annotationChanged = new Promise((resolve) => {
+          editor.getSession().once('changeAnnotation', () => {
+            const annotations = editor.getSession().getAnnotations();
+
+            let hasError = false;
+            Object.keys(annotations).some((key) => {
+              hasError = true;
+              return annotations[key].type === 'error';
+            });
+
+            resolve(hasError);
+          });
+        });
+
+        (async () => {
+          const hasError = await annotationChanged;
+          if (this.state.html !== editor.getValue() && !hasError) {
+            this.setState({
+              html: editor.getValue()
+            });
+          }
+        })(); */
+
         if (this.state.html !== editor.getValue()) {
           this.setState({
             html: editor.getValue()

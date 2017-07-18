@@ -42,14 +42,15 @@ class Iframe extends Component {
     const iframeHead = iframeDoc.head;
     const iframeBody = iframeDoc.body;
 
-    const bodyRegex = /<\/body>(?![\s\S]*<\/body>[\s\S]*$)/i; // find closing body tag
+    // let html = this.props.html;
     let html = this.props.html;
     const css = this.props.css;
+    /* const bodyRegex = /<\/body>(?![\s\S]*<\/body>[\s\S]*$)/i; // find closing body tag
     if (bodyRegex.test(html)) {
       html = html.replace(bodyRegex, `<style type="text/css">${css}</style>\n</body>`);
     } else {
       html = `${html}<style type="text/css">${css}</style>`;
-    }
+    }*/
 
     // Extract <script /> tag from html
     const { scriptsArr, scriptsSrcArr } = this.extractScript(html);
@@ -73,7 +74,7 @@ class Iframe extends Component {
           this.loadIframeScriptSrc(iframeDoc, src, () => {
             if (scriptsArr.length > 0) {
               scriptsArr.forEach((script) => {
-                this.loadIframeScriptInline(iframeDoc, script);
+                this.loadIframeCodeInline(iframeDoc, script);
               });
             }
           });
@@ -84,9 +85,13 @@ class Iframe extends Component {
     } else {
       if (scriptsArr.length > 0) {
         scriptsArr.forEach((script) => {
-          this.loadIframeScriptInline(iframeDoc, script);
+          this.loadIframeCodeInline(iframeDoc, script);
         });
       }
+    }
+
+    if (css) {
+      this.loadIframeCodeInline(iframeDoc, css, 'css');
     }
 
     // Manipulate anchor tag
@@ -136,15 +141,24 @@ class Iframe extends Component {
     iframeDoc.getElementsByTagName('body')[0].appendChild(s);
   }
 
-  loadIframeScriptInline(iframeDoc, script) {
-    const s = iframeDoc.createElement('script');
-    s.type = 'text/javascript';
+  loadIframeCodeInline(iframeDoc, code, type = 'js') {
+    let targetAppend;
+    let s;
+    if (type === 'js') {
+      targetAppend = iframeDoc.body;
+      s = iframeDoc.createElement('script');
+      s.type = 'text/javascript';
+    } else {
+      targetAppend = iframeDoc.head;
+      s = iframeDoc.createElement('style');
+      s.type = 'text/css';
+    }
     try {
-      s.appendChild(iframeDoc.createTextNode(script));
-      iframeDoc.body.appendChild(s);
+      s.appendChild(iframeDoc.createTextNode(code));
+      targetAppend.appendChild(s);
     } catch (e) {
-      s.text = script;
-      iframeDoc.body.appendChild(s);
+      s.text = code;
+      targetAppend.appendChild(s);
     }
   }
 
