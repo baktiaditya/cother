@@ -1,3 +1,6 @@
+@import "../../shared/sass/variables";
+@import "../../shared/sass/global";
+
 .headline {
   color: #555;
   font-family: "Montserrat", sans-serif;
@@ -9,9 +12,9 @@
 .caption {
   font-family: "Montserrat", sans-serif;
   font-weight: 300;
-  font-size: .9375rem;
+  font-size: .875rem;
   margin: 0 auto;
-  width: 280px;
+  width: 320px;
 }
 
 @media only screen and (max-width: 280px) {
