@@ -40,9 +40,9 @@ class HomePage extends Component {
   render() {
     return (
       <div className={scss['container']}>
-        <Link className={scss['link']} to={`/${generateRandomString(20)}`}>Create New</Link>
+        <Link className={scss['link']} to={`/anonymous/${generateRandomString(20)}`}>Create New</Link>
         <br />
-        <Link className={scss['link']} to={`/${generateRandomString(20)}`}>
+        <Link className={scss['link']} to={`/anonymous/${generateRandomString(20)}`}>
           <img className={scss['img']} src={require('./cookie.jpg')} alt='hehe' width={310} />
         </Link>
 

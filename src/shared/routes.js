@@ -18,7 +18,7 @@ export default [
     indexRoute: { component: HomePage },
     childRoutes: [
       {
-        path: ':id',
+        path: 'anonymous/:id',
         component: TextEditorPage
       }
     ]

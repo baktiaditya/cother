@@ -13,7 +13,7 @@ class BasePage extends Component {
   _style;
 
   componentWillMount() {
-    console.log(this.props);
+    // console.log(this.props);
 
     // Create custom <style /> in <head />
     const head = document.head || document.getElementsByTagName('head')[0];

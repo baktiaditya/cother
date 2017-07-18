@@ -20,13 +20,15 @@
     "flexibility": "^2.0.1",
     "firebase": "3.9.0",
     "firepad": "1.4.0",
-    "ace-builds": "1.2.8"
+    "ace-builds": "1.2.8",
+    "emmet": "https://github.com/cloud9ide/emmet-core.git#f881b37934348c151cabe36890c9dac23a0016de"
   },
   "install": {
     "path": "public/libs",
     "sources": {
       "ace-builds": "bower_components/ace-builds/src-min-noconflict/**",
-      "DOM4": "bower_components/DOM4/build/dom4.js"
+      "DOM4": "bower_components/DOM4/build/dom4.js",
+      "emmet": "bower_components/emmet/emmet.js"
     }
   }
 }

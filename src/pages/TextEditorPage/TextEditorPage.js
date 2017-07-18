@@ -1,5 +1,6 @@
 /* eslint no-console:0, no-eval:0, no-param-reassign:0 */
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { firebaseDb } from '../../shared/firebase';
@@ -9,7 +10,7 @@ import scss from './TextEditorPage.mod.scss';
 import scssString from './TextEditorPage.string.scss';
 
 // Components
-import Header from '../../components/Header/Header';
+import HeaderEditor from '../../components/HeaderEditor/HeaderEditor';
 import { Row, Cell, Splitter } from '../../components/ResizeableGrid/ResizeableGrid';
 import Iframe from '../../components/Iframe/Iframe';
 
@@ -24,16 +25,18 @@ class TextEditorPage extends Component {
   _id = this.props.params.id;
   _dbPrefix = `documents-no-owner/${this._id}`;
   _userId = Math.floor(Math.random() * 9999999999).toString();
-  _userRef = firebaseDb.ref(`${this._dbPrefix}/presence/${this._userId}`);
+  _userDbRef = firebaseDb.ref(`${this._dbPrefix}/presence/${this._userId}`);
   _displayName = `Guest ${Math.floor(Math.random() * 1000)}`;
   _editor = {
     html: null,
     css: null
   };
   _firepad = {};
-  _firepadRef = {}
+  _firepadDbRef = {}
   _htmlDefaultText = require('./templates/defaultHtml.html');
   _cssDefaultText = require('./templates/defaultCss.string.css');
+  _htmlRef;
+  _cssRef;
   _style;
 
   state = {
@@ -49,10 +52,10 @@ class TextEditorPage extends Component {
   componentWillMount() {
     // Database
     Object.keys(this._editor).forEach(editor => {
-      this._firepadRef[editor] = firebaseDb.ref(`${this._dbPrefix}/${editor}`);
+      this._firepadDbRef[editor] = firebaseDb.ref(`${this._dbPrefix}/${editor}`);
     });
-    this._userRef.onDisconnect().remove();
-    this._userRef.getParent().on('value', (snapshot) => {
+    this._userDbRef.onDisconnect().remove();
+    this._userDbRef.getParent().on('value', (snapshot) => {
       if (snapshot.val()) {
         this.setState({
           userList: snapshot.val()
@@ -86,7 +89,7 @@ class TextEditorPage extends Component {
 
   componentDidMount() {
     this._editor.html = this.createTextEditor({
-      targetDomId: 'html',
+      targetDom: ReactDOM.findDOMNode(this._htmlRef),
       mode: 'html',
       onChange: (editor) => {
         if (this.state.html !== editor.getValue()) {
@@ -97,7 +100,7 @@ class TextEditorPage extends Component {
       }
     });
 
-    this._firepad.html = window.Firepad.fromACE(this._firepadRef.html, this._editor.html, {
+    this._firepad.html = window.Firepad.fromACE(this._firepadDbRef.html, this._editor.html, {
       userId: this._userId,
       defaultText: this._htmlDefaultText
     });
@@ -112,7 +115,7 @@ class TextEditorPage extends Component {
     }));
 
     this._editor.css = this.createTextEditor({
-      targetDomId: 'css',
+      targetDom: ReactDOM.findDOMNode(this._cssRef),
       mode: 'css',
       onChange: (editor) => {
         if (this.state.css !== editor.getValue()) {
@@ -123,7 +126,7 @@ class TextEditorPage extends Component {
       }
     });
 
-    this._firepad.css = window.Firepad.fromACE(this._firepadRef.css, this._editor.css, {
+    this._firepad.css = window.Firepad.fromACE(this._firepadDbRef.css, this._editor.css, {
       userId: this._userId,
       defaultText: this._cssDefaultText
     });
@@ -132,7 +135,7 @@ class TextEditorPage extends Component {
 
   componentWillUpdate(nextProps, nextState) {
     if (JSON.stringify(this.state.user) !== JSON.stringify(nextState.user)) {
-      this._userRef.set({
+      this._userDbRef.set({
         displayName: nextState.user.displayName,
         color: nextState.user.color
       });
@@ -151,16 +154,16 @@ class TextEditorPage extends Component {
     });
 
     // Destroy and unlisten user db
-    this._userRef.getParent().off('value');
-    this._userRef.remove();
+    this._userDbRef.getParent().off('value');
+    this._userDbRef.remove();
 
     // Remove custom <style /> in <head />
     const head = document.head || document.getElementsByTagName('head')[0];
     head.removeChild(this._style);
   }
 
-  createTextEditor({ targetDomId, mode, onChange }) {
-    const editor = window.ace.edit(targetDomId);
+  createTextEditor({ targetDom, mode, onChange }) {
+    const editor = window.ace.edit(targetDom);
     editor.session.setMode(`ace/mode/${mode}`);
     editor.session.setTabSize(2);
     editor.session.setUseWrapMode(true);
@@ -171,15 +174,19 @@ class TextEditorPage extends Component {
     // https://github.com/ajaxorg/ace/blob/master/demo/autocompletion.html
     editor.setOptions({
       enableBasicAutocompletion: true,
+      enableEmmet: true,
       enableSnippets: true,
       enableLiveAutocompletion: false,
       showGutter: false,
+      showPrintMargin: false,
       vScrollBarAlwaysVisible: false,
       theme: 'ace/theme/tomorrow_night'
     });
     editor.on('change', () => {
       onChange && onChange(editor);
     });
+
+    // console.log(Object.keys(editor.$options));
 
     return editor;
   }
@@ -197,7 +204,7 @@ class TextEditorPage extends Component {
 
     return (
       <div className={scss['container']}>
-        <Header {...headerProps} />
+        <HeaderEditor {...headerProps} />
 
         <Row>
           {/* HTML */}
@@ -205,7 +212,7 @@ class TextEditorPage extends Component {
             hide={!this.state.showEditor.includes('html')}
             onDimensionChange={() => this._editor.html && this._editor.html.resize()}
           >
-            <div id='html' className={scss['editor-container']} />
+            <div ref={c => (this._htmlRef = c)} className={scss['editor-container']} />
           </Cell>
           <Splitter
             hide={!this.state.showEditor.includes('html')}
@@ -218,7 +225,7 @@ class TextEditorPage extends Component {
             hide={!this.state.showEditor.includes('css')}
             onDimensionChange={() => this._editor.css && this._editor.css.resize()}
           >
-            <div id='css' className={scss['editor-container']} />
+            <div ref={c => (this._cssRef = c)} className={scss['editor-container']} />
           </Cell>
           <Splitter
             hide={!this.state.showEditor.includes('css')}

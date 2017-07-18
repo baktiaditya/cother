@@ -88,6 +88,15 @@ class Iframe extends Component {
         });
       }
     }
+
+    // Manipulate anchor tag
+    // provide target="_top" by default
+    const anchors = iframeDoc.getElementsByTagName('a');
+    for (let i = 0; i < anchors.length; i++) {
+      if (!anchors[i].getAttribute('target')) {
+        anchors[i].setAttribute('target', '_top');
+      }
+    }
   }
 
   extractScript(html) {

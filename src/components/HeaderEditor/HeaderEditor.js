@@ -5,7 +5,7 @@ import Loader from '../Loader/Loader';
 import Icon from '../Icon/Icon';
 import scss from './Header.mod.scss';
 
-class Header extends Component {
+class HeaderEditor extends Component {
   static propTypes = {
     brand: PropTypes.string,
     isLoading: PropTypes.bool,
@@ -45,4 +45,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default HeaderEditor;
