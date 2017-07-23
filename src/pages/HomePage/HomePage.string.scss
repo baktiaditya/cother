@@ -1,7 +1,13 @@
-body,
+@import "../../shared/sass/variables";
+
 html,
+body,
 #__container,
 #base,
 [data-reactroot] {
   height: 100%;
+}
+
+body {
+  background-color: $gray-darker;
 }

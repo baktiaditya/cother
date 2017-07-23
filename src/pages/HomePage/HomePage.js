@@ -38,13 +38,20 @@ class HomePage extends Component {
   }
 
   render() {
+    const logoImg = require('../../shared/assets/logo.svg');
+
     return (
       <div className={scss['container']}>
-        <Link className={scss['link']} to={`/anonymous/${generateRandomString(20)}`}>Create New</Link>
-        <br />
-        <Link className={scss['link']} to={`/anonymous/${generateRandomString(20)}`}>
-          <img className={scss['img']} src={require('./cookie.jpg')} alt='hehe' width={310} />
-        </Link>
+        <div className={scss['container-inner']}>
+          <div className={scss['logo']}>
+            <img src={logoImg} alt='Logo' />
+            <h1>Cother</h1>
+          </div>
+          <p className={scss['caption']}>A real-time collaborative code editor and previewer</p>
+          <Link className={scss['link']} to={`/anonymous/${generateRandomString(20)}`}>
+            Create New
+          </Link>
+        </div>
 
         <Footer type='fixed' />
       </div>

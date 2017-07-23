@@ -185,6 +185,8 @@ class TextEditorPage extends Component {
     .map(e => e.mode);
 
     if (JSON.stringify(prevEditor) !== JSON.stringify(currEditor)) {
+      this.resizeAllEditor();
+
       if (!this._splitterData) {
         return false;
       }
@@ -238,9 +240,10 @@ class TextEditorPage extends Component {
     });
   }
 
-  removeEmpty = (obj) => {
-    Object.keys(obj).forEach((key) => (obj[key] === null) && delete obj[key]);
-    return obj;
+  resizeAllEditor() {
+    Object.keys(this._ace).forEach(a => {
+      this._ace[a].instance && this._ace[a].instance.resize();
+    });
   }
 
   renderEditor(mode) {
@@ -275,11 +278,7 @@ class TextEditorPage extends Component {
           this._splitterData = data;
           this.setState({ showIframeMask: true });
         }}
-        onDragMove={() => {
-          Object.keys(this._ace).forEach(a => {
-            this._ace[a].instance && this._ace[a].instance.resize();
-          });
-        }}
+        onDragMove={() => this.resizeAllEditor()}
         onDragStop={() => this.setState({ showIframeMask: false })}
         style={style}
       />
