@@ -8,7 +8,6 @@ import { Cell } from './Cell';
 class Splitter extends Component {
   static propTypes = {
     className: PropTypes.string,
-    hide: PropTypes.bool,
     onDragStart: PropTypes.func,
     onDragMove: PropTypes.func,
     onDragStop: PropTypes.func,
@@ -38,12 +37,20 @@ class Splitter extends Component {
 
     const node = ReactDOM.findDOMNode(this._elemRef);
     const parent = ReactDOM.findDOMNode(e.currentTarget).parentNode.childNodes;
+    const filteredParent = [];
+    for (let i = 0; i < parent.length; i++) {
+      const style = getComputedStyle(parent[i]);
+      // exclude hidden elem
+      if (style && style.display !== 'none') {
+        filteredParent.push(parent[i]);
+      }
+    }
     let resizeableElement;
     let otherElement;
-    for (let i = 0; i < parent.length; i++) {
-      if (parent[i] === node) {
-        resizeableElement = parent[i - 1];
-        otherElement = parent[i + 1];
+    for (let i = 0; i < filteredParent.length; i++) {
+      if (filteredParent[i] === node) {
+        resizeableElement = filteredParent[i - 1];
+        otherElement = filteredParent[i + 1];
         break;
       }
     }
@@ -68,9 +75,11 @@ class Splitter extends Component {
       this.props.onDragStop && this.props.onDragStop();
 
       if (this.props.type === 'row') {
-        this.state.resizeableElement.dataset.cellMaxWidth = '';
+        // this.state.resizeableElement.dataset.cellMaxWidth = '';
+        this.state.resizeableElement.removeAttribute('data-cell-max-width');
       } else {
-        this.state.resizeableElement.dataset.cellMaxHeight = '';
+        // this.state.resizeableElement.dataset.cellMaxHeight = '';
+        this.state.resizeableElement.removeAttribute('data-cell-max-height');
       }
     });
   }
@@ -114,7 +123,6 @@ class Splitter extends Component {
   render() {
     const {
       className,
-      hide,
       type,
       ...props
     } = this.props;
@@ -128,7 +136,6 @@ class Splitter extends Component {
       'splitter',
       `${type === 'row' ? 'splitter-vertical' : 'splitter-horizontal'}`,
       {
-        'splitter-hide': hide,
         'splitter-dragging': this.state.dragging
       }
     );

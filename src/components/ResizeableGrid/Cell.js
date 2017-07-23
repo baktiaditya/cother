@@ -9,7 +9,6 @@ import scss from './ResizeableGrid.mod.scss';
 class Cell extends Component {
   static propTypes = {
     className: PropTypes.string,
-    hide: PropTypes.bool,
     style: PropTypes.object,
     onDimensionChange: PropTypes.func,
     type: PropTypes.oneOf(['row', 'column']),
@@ -33,7 +32,6 @@ class Cell extends Component {
   render() {
     const {
       className,
-      hide,
       style,
       type,
       height,
@@ -59,8 +57,7 @@ class Cell extends Component {
     const classes = cx(
       className,
       'cell',
-      `cell-type-${type}`,
-      { 'cell-hide': hide }
+      `cell-type-${type}`
     );
 
     return (

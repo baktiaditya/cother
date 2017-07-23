@@ -1,0 +1,15 @@
+@mixin clearfix {
+  &::after {
+    display: table;
+    content: '';
+    clear: both;
+  }
+}
+
+@mixin clearfix-flex {
+  &::before,
+  &::after {
+    flex-basis: 0;
+    order: 1;
+  }
+}

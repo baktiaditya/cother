@@ -1,11 +1,12 @@
 @import "../../shared/sass/variables";
 
 body {
+  background-color: $header-bg-color;
   padding-top: $header-height;
 }
 
-body,
 html,
+body,
 #__container,
 #base,
 [data-reactroot] {

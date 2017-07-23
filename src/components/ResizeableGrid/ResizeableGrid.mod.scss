@@ -28,10 +28,6 @@
     max-height: 100%;
     min-width: 1px;
   }
-
-  &.cell-hide {
-    display: none;
-  }
 }
 
 .splitter {
@@ -72,8 +68,4 @@
 
 .splitter-dragging {
   background-color: lighten($header-bg-color, 20%);
-}
-
-.splitter-hide {
-  display: none;
 }

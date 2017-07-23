@@ -1,5 +1,6 @@
-@import "../../shared/sass/mixins";
+@import "../../shared/sass/variables";
 @import "../../shared/sass/global";
+@import "../../shared/sass/mixins/font";
 
 *,
 *::before,
@@ -10,9 +11,9 @@
 
 html,
 body {
-  font-family: "Montserrat", sans-serif;
+  font-family: $font-family-base;
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.2;
 }
 

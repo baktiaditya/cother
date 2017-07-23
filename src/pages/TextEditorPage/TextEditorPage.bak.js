@@ -57,7 +57,7 @@ class TextEditorPage extends Component {
 
     this.state = {
       editor: {},
-      editorReady: [],
+      editorReady: {},
       user: {},
       userList: [],
       showIframeMask: false
@@ -111,7 +111,108 @@ class TextEditorPage extends Component {
   }
 
   componentDidMount() {
-    Object.keys(this._ace).forEach((mode) => {
+    const activeEditor = Object.keys(this.state.editor)
+    .map(e => ({ ...this.state.editor[e], mode: e }))
+    .filter((e) => e.show === true && e.mode !== 'output');
+
+    this.createEditor(activeEditor);
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (JSON.stringify(this.state.user) !== JSON.stringify(nextState.user)) {
+      this._userDbRef.set({
+        displayName: nextState.user.displayName,
+        color: nextState.user.color
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, prevContext) {
+    // Reset cell width
+    const prevEditor = Object.keys(prevState.editor)
+    .map(e => ({ ...prevState.editor[e], mode: e }))
+    .filter((e) => e.show === true)
+    .map(e => e.mode);
+
+    const currEditor = Object.keys(this.state.editor)
+    .map(e => ({ ...this.state.editor[e], mode: e }))
+    .filter((e) => e.show === true)
+    .map(e => e.mode);
+
+    if (JSON.stringify(prevEditor) !== JSON.stringify(currEditor)) {
+      const _cellRef = this.removeEmpty(this._cellRef);
+      Object.keys(_cellRef).forEach(cellRef => {
+
+        if (cellRef !== 'output') {
+          if (this._ace[cellRef].instance) {
+            this._ace[cellRef].instance.destroy();
+            const el = this._ace[cellRef].instance.container;
+            el.innerHTML = '';
+            this._ace[cellRef].instance = null;
+          }
+          if (this._firepad[cellRef]) {
+            this._firepad[cellRef].dispose();
+            this._firepad[cellRef] = null;
+          }
+        }
+
+        const dom = ReactDOM.findDOMNode(_cellRef[cellRef]);
+        if (dom.style.removeProperty) {
+          dom.style.removeProperty('flex');
+          dom.style.removeProperty('max-width');
+        } else {
+          dom.style.removeAttribute('flex');
+          dom.style.removeAttribute('max-width');
+        }
+      });
+
+      const activeEditor = Object.keys(this.state.editor)
+      .map(e => ({ ...this.state.editor[e], mode: e }))
+      .filter((e) => e.show === true && e.mode !== 'output');
+
+      this.createEditor(activeEditor);
+    }
+  }
+
+  componentWillUnmount() {
+    // Destroy Ace editor
+    Object.keys(this._ace).forEach(key => {
+      if (this._ace[key].instance && _.isFunction(this._ace[key].instance.destroy)) {
+        this._ace[key].instance.destroy();
+      }
+    });
+
+    // Destroy firepad
+    Object.keys(this._firepad).forEach(key => {
+      if (this._firepad[key] && _.isFunction(this._firepad[key].dispose)) {
+        this._firepad[key].dispose();
+      }
+    });
+
+    // Remove and unlisten user db
+    this._userDbRef.getParent().off('value');
+    this._userDbRef.remove();
+
+    // Remove custom <style /> in <head />
+    const head = document.head || document.getElementsByTagName('head')[0];
+    head.removeChild(this._style);
+  }
+
+  onBtnEditorClick = (mode) => {
+    this.setState({
+      editor: {
+        ...this.state.editor,
+        [mode]: {
+          ...this.state.editor[mode],
+          show: !this.state.editor[mode].show
+        }
+      }
+    });
+  }
+
+  createEditor(activeEditor) {
+    activeEditor.forEach((node) => {
+      const { mode } = node;
       const editor = window.ace.edit(ReactDOM.findDOMNode(this._ace[mode].ref));
       editor.session.setMode(`ace/mode/${mode}`);
       editor.session.setTabSize(2);
@@ -157,81 +258,8 @@ class TextEditorPage extends Component {
           color: this._firepad[mode].firebaseAdapter_.color_,
           displayName: this._userDisplayName
         },
-        editorReady: [...this.state.editorReady, mode]
+        editorReady: { ...this.state.editorReady, [mode]: true }
       }));
-    });
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    if (JSON.stringify(this.state.user) !== JSON.stringify(nextState.user)) {
-      this._userDbRef.set({
-        displayName: nextState.user.displayName,
-        color: nextState.user.color
-      });
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState, prevContext) {
-    // Reset cell width
-    const prevEditor = Object.keys(prevState.editor)
-    .map(e => ({ ...prevState.editor[e], mode: e }))
-    .filter((e) => e.show === true)
-    .map(e => e.mode);
-
-    const currEditor = Object.keys(this.state.editor)
-    .map(e => ({ ...this.state.editor[e], mode: e }))
-    .filter((e) => e.show === true)
-    .map(e => e.mode);
-
-    if (JSON.stringify(prevEditor) !== JSON.stringify(currEditor)) {
-      const _cellRef = this.removeEmpty(this._cellRef);
-      Object.keys(_cellRef).forEach(cellRef => {
-
-        const dom = ReactDOM.findDOMNode(_cellRef[cellRef]);
-        if (dom.style.removeProperty) {
-          dom.style.removeProperty('flex');
-          dom.style.removeProperty('max-width');
-        } else {
-          dom.style.removeAttribute('flex');
-          dom.style.removeAttribute('max-width');
-        }
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    // Destroy Ace editor
-    Object.keys(this._ace).forEach(key => {
-      if (this._ace[key].instance && _.isFunction(this._ace[key].instance.destroy)) {
-        this._ace[key].instance.destroy();
-      }
-    });
-
-    // Destroy firepad
-    Object.keys(this._firepad).forEach(key => {
-      if (this._firepad[key] && _.isFunction(this._firepad[key].dispose)) {
-        this._firepad[key].dispose();
-      }
-    });
-
-    // Remove and unlisten user db
-    this._userDbRef.getParent().off('value');
-    this._userDbRef.remove();
-
-    // Remove custom <style /> in <head />
-    const head = document.head || document.getElementsByTagName('head')[0];
-    head.removeChild(this._style);
-  }
-
-  onBtnEditorClick = (mode) => {
-    this.setState({
-      editor: {
-        ...this.state.editor,
-        [mode]: {
-          ...this.state.editor[mode],
-          show: !this.state.editor[mode].show
-        }
-      }
     });
   }
 
@@ -240,42 +268,21 @@ class TextEditorPage extends Component {
     return obj;
   }
 
-  renderEditor(mode) {
-    const ace = this._ace[mode];
-    const isHide = !this.state.editor[mode].show;
-    const style = { display: isHide ? 'none' : undefined };
-    const currEditor = Object.keys(this.state.editor)
-    .map(e => ({ ...this.state.editor[e], mode: e }))
-    .filter((e) => e.show === true)
-    .map(e => e.mode);
-
-    if (currEditor.length === 1) {
-      return ([
-        <Cell
-          key={`${mode}-cell`}
-          ref={c => (this._cellRef[mode] = c)}
-          onDimensionChange={() => ace.instance && ace.instance.resize()}
-          style={style}
-        >
-          <div id={mode} ref={c => (ace.ref = c)} className={scss['editor-container']} />
-        </Cell>
-      ]);
-    }
+  renderEditor(node) {
+    const ace = this._ace[node.mode];
 
     return ([
       <Cell
-        key={`${mode}-cell`}
-        ref={c => (this._cellRef[mode] = c)}
+        key={`${node.mode}-cell`}
+        ref={c => (this._cellRef[node.mode] = c)}
         onDimensionChange={() => ace.instance && ace.instance.resize()}
-        style={style}
       >
-        <div id={mode} ref={c => (ace.ref = c)} className={scss['editor-container']} />
+        <div id={node.mode} ref={c => (ace.ref = c)} className={scss['editor-container']} />
       </Cell>,
       <Splitter
-        key={`${mode}-splitter`}
+        key={`${node.mode}-splitter`}
         onDragStart={() => this.setState({ showIframeMask: true })}
         onDragStop={() => this.setState({ showIframeMask: false })}
-        style={style}
       />
     ]);
   }
@@ -293,7 +300,13 @@ class TextEditorPage extends Component {
       totalUsers: !_.isEmpty(userList) ? Object.keys(userList).length : 0
     };
     const headerPropsEditorArr = Object.keys(headerProps.editor).filter((e) => e !== 'output');
-    headerProps.isLoading = JSON.stringify(editorReady) !== JSON.stringify(headerPropsEditorArr);
+    headerProps.isLoading = JSON.stringify(Object.keys(editorReady)) !== JSON.stringify(headerPropsEditorArr);
+    const activeEditor = Object.keys(this.state.editor)
+    .map(e => ({ ...this.state.editor[e], mode: e }))
+    .filter((e) => e.show === true && e.mode !== 'output');
+
+    console.log('editorReady', Object.keys(editorReady));
+    console.log('headerPropsEditorArr', headerPropsEditorArr);
 
     return (
       <div className={scss['container']}>
@@ -301,7 +314,7 @@ class TextEditorPage extends Component {
           <HeaderEditor {...headerProps} />
 
           {/* Editor */}
-          {Object.keys(this._ace).map((mode) => this.renderEditor(mode))}
+          {activeEditor.map((node, index) => this.renderEditor(node, index))}
 
           {/* iFrame */}
           <Cell

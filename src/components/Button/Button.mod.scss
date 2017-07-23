@@ -1,0 +1,160 @@
+@import "../../shared/sass/variables";
+@import "../../shared/sass/mixins/button";
+@import "../../shared/sass/mixins/hover";
+
+//
+// Base styles
+//
+
+.btn {
+  display: inline-block;
+  font-family: $font-family-base;
+  font-weight: $btn-font-weight;
+  line-height: $input-line-height;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: $btn-border-width solid transparent;
+  transition: background-color .2s ease-out, border-color .2s ease-out, color .2s ease-out, opacity .2s ease-out;
+  @include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-border-radius);
+
+  @include hover-focus {
+    text-decoration: none;
+  }
+
+  &:focus,
+  &.focus {
+    text-decoration: none;
+    outline: none;
+  }
+
+  &:active,
+  &.active {
+    background-image: none;
+    outline: 0;
+
+    &:hover,
+    &:focus,
+    &.focus {
+      outline: 0;
+    }
+  }
+
+  &.disabled,
+  &:disabled {
+    cursor: $cursor-disabled;
+  }
+
+  &.disabled:not(.btn-is-loading),
+  &:disabled:not(.btn-is-loading) {
+    opacity: .75;
+  }
+
+  &.btn-no-text.btn-has-icon {
+    padding-left: .625rem;
+    padding-right: .625rem;
+  }
+
+  //
+  // Icon
+  //
+  .icon {
+    height: 16px;
+    width: 16px;
+    vertical-align: -15%;
+    transition: color .2s ease-out;
+  }
+  > span + .icon {
+    margin-left: 5px;
+  }
+  > .icon + span {
+    margin-left: 5px;
+  }
+}
+
+// Future-proof disabling of clicks on `<a>` elements
+a.btn.disabled,
+fieldset[disabled] a.btn {
+  pointer-events: none;
+}
+
+//
+// Alternate buttons
+//
+
+.btn-white {
+  @include button-variant($btn-white-color, $btn-white-bg, $btn-white-bg-hover, $btn-white-border);
+  @include button-icon-variant($btn-white-color);
+}
+
+//
+// Button Sizes
+//
+
+.btn-size-sm {
+  // line-height: ensure proper height of button next to small input
+  @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $font-size-sm, $btn-border-radius-sm);
+  line-height: $input-line-height-sm;
+}
+
+.btn-size-lg {
+  // line-height: ensure even-numbered height of button next to large input
+  @include button-size($btn-padding-y-lg, $btn-padding-x-lg, $font-size-lg, $btn-border-radius-lg);
+  line-height: $input-line-height-lg;
+  .icon {
+    height: 24px;
+    width: 24px;
+    vertical-align: -20%;
+  }
+}
+
+//
+// Block button
+//
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+// Vertically space out multiple block buttons
+.btn-block + .btn-block {
+  margin-top: $btn-block-spacing-y;
+}
+
+// Specificity overrides
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  &.btn-block {
+    width: 100%;
+  }
+}
+
+//
+// Loader
+//
+
+.btn-is-loading {
+  .loader {
+    height: $font-size-base * $input-line-height;
+  }
+
+  &.btn-size-sm {
+    .loader {
+      height: $font-size-sm * $input-line-height-sm;
+    }
+  }
+
+  &.btn-size-lg {
+    .loader {
+      height: $font-size-lg * $input-line-height-lg;
+    }
+  }
+}
+
+.btn-size-lg .loader {
+  line-height: $input-line-height-lg;
+}
