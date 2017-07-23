@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import scss from './Iframe.mod.scss';
 
@@ -45,8 +46,6 @@ class Iframe extends Component {
   updateContent() {
     const iframe = ReactDOM.findDOMNode(this._elemRef);
     const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-    const iframeHead = iframeDoc.head;
-    const iframeBody = iframeDoc.body;
 
     // let html = this.props.html;
     let html = this.props.html;
@@ -72,8 +71,8 @@ class Iframe extends Component {
     const body = html.match(/<body[^>]*>[\s\S]*<\/body>/gi);
 
     // Set iframe content
-    iframeHead.innerHTML = head;
-    iframeBody.innerHTML = body;
+    iframeDoc.head.innerHTML = !_.isEmpty(head) ? head[0] : '';
+    iframeDoc.body.innerHTML = !_.isEmpty(body) ? body[0] : '';
 
     if (scriptsSrcArr.length > 0) {
       scriptsSrcArr.forEach((src, num) => {

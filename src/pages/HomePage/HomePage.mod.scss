@@ -1,5 +1,7 @@
 @import "../../shared/sass/variables";
 
+$stroke-width: 2;
+
 .container {
   display: table;
   height: 100%;
@@ -32,10 +34,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   img {
     display: inline-block;
-    width: 80px;
+    width: 72px;
     height: auto;
     margin-right: 14px;
   }
@@ -53,22 +55,79 @@
   color: darken($gray-lighter, 10%);
   font-family: "Montserrat", sans-serif;
   font-weight: 200;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   margin-top: 0;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .link {
-  display: inline-block;
+  color: $red;
   font-family: "Montserrat", sans-serif;
   font-weight: 300;
-  font-size: 1.125rem;
-  padding: $btn-padding-y 0;
-  border-bottom: 1px solid transparent;
-  transition: border-bottom-color 200ms;
+  text-transform: uppercase;
+  font-size: 15px;
+  letter-spacing: 1px;
+  border-bottom: 1px solid $red;
+  padding: 8px 0;
+  transition: padding-left 200ms, padding-right 200ms;
 
   &:hover {
-    border-bottom: 1px solid $red;
     text-decoration: none;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+.svg-wrapper {
+  position: relative;
+  display: block;
+  height: 50px;
+  margin: 0 auto;
+  width: 220px;
+
+  &:hover {
+    text-decoration: none;
+    .shape {
+      animation: draw 200ms linear forwards;
+    }
+  }
+}
+
+.shape {
+  fill: transparent;
+  stroke-dasharray: 130 330;
+  stroke-dashoffset: -244;
+  stroke-width: $stroke-width;
+  stroke: $red;
+}
+
+.text {
+  position: absolute;
+  display: flex;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  justify-content: center;
+  align-items: center;
+  color: $red;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 300;
+  text-transform: uppercase;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+@keyframes draw {
+  0% {
+    stroke-dasharray: 130 330;
+    stroke-dashoffset: -244;
+    stroke-width: $stroke-width;
+  }
+  100% {
+    stroke-dasharray: 460;
+    stroke-dashoffset: 0;
+    stroke-width: $stroke-width;
   }
 }

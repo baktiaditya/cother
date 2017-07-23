@@ -51,6 +51,14 @@ class HomePage extends Component {
           <Link className={scss['link']} to={`/anonymous/${generateRandomString(20)}`}>
             Create New
           </Link>
+          {/*<Link className={scss['svg-wrapper']} to={`/anonymous/${generateRandomString(20)}`}>*/}
+            {/*<svg height={50} width={180} xmlns='http://www.w3.org/2000/svg'>*/}
+              {/*<rect className={scss['shape']} height={50} width={180} rx={6} ry={6} />*/}
+            {/*</svg>*/}
+            {/*<div className={scss['text']}>*/}
+              {/*<span>Create New</span>*/}
+            {/*</div>*/}
+          {/*</Link>*/}
         </div>
 
         <Footer type='fixed' />

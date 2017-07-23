@@ -68,7 +68,7 @@ class TextEditorPage extends Component {
     Object.keys(this._ace).forEach(mode => {
       this.state.editor[mode] = {
         show: this._ace[mode].show,
-        content: this._ace[mode].defaultContent
+        content: ''
       };
     });
     this.state.editor.output = { show: true };
