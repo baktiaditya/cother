@@ -33,8 +33,6 @@ class Splitter extends Component {
   }
 
   onMouseDown = (e) => {
-    this.props.onDragStart && this.props.onDragStart();
-
     const node = ReactDOM.findDOMNode(this._elemRef);
     const parent = ReactDOM.findDOMNode(e.currentTarget).parentNode.childNodes;
     const filteredParent = [];
@@ -61,6 +59,8 @@ class Splitter extends Component {
       resizeableElement.dataset.cellMaxHeight = `${resizeableElement.clientHeight + otherElement.clientHeight}px`;
     }
 
+    this.props.onDragStart && this.props.onDragStart({ resizeableElement, otherElement }, e);
+
     this.setState({
       dragging: true,
       resizeableElement,
@@ -68,11 +68,11 @@ class Splitter extends Component {
     });
   }
 
-  onMouseUp = () => {
+  onMouseUp = (e) => {
     this.setState({
       dragging: false
     }, () => {
-      this.props.onDragStop && this.props.onDragStop();
+      this.props.onDragStop && this.props.onDragStop(e);
 
       if (this.props.type === 'row') {
         // this.state.resizeableElement.dataset.cellMaxWidth = '';
@@ -85,12 +85,9 @@ class Splitter extends Component {
   }
 
   onMouseMove = (e) => {
-    this.props.onDragMove && this.props.onDragMove();
+    this.props.onDragMove && this.props.onDragMove(e);
 
-    const {
-      resizeableElement,
-      otherElement
-    } = this.state;
+    const { resizeableElement, otherElement } = this.state;
     const offset = resizeableElement.getBoundingClientRect();
 
     if (this.props.type === 'row') {

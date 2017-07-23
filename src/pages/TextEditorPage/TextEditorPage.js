@@ -46,13 +46,14 @@ class TextEditorPage extends Component {
       },
       javascript: {
         show: false,
-        defaultContent: '// JavaScript'
+        defaultContent: '// JS\n\nconsole.log(jQuery.fn.jquery);'
       }
     };
 
     this._firepad = {};
     this._firepadDbRef = {};
     this._cellRef = {};
+    this._splitterData = null;
     this._style = null;
 
     this.state = {
@@ -184,10 +185,11 @@ class TextEditorPage extends Component {
     .map(e => e.mode);
 
     if (JSON.stringify(prevEditor) !== JSON.stringify(currEditor)) {
-      const _cellRef = this.removeEmpty(this._cellRef);
-      Object.keys(_cellRef).forEach(cellRef => {
-
-        const dom = ReactDOM.findDOMNode(_cellRef[cellRef]);
+      if (!this._splitterData) {
+        return false;
+      }
+      Object.keys(this._splitterData).forEach((el) => {
+        const dom = this._splitterData[el];
         if (dom.style.removeProperty) {
           dom.style.removeProperty('flex');
           dom.style.removeProperty('max-width');
@@ -196,6 +198,7 @@ class TextEditorPage extends Component {
           dom.style.removeAttribute('max-width');
         }
       });
+      this._splitterData = null;
     }
   }
 
@@ -249,20 +252,7 @@ class TextEditorPage extends Component {
     .filter((e) => e.show === true)
     .map(e => e.mode);
 
-    if (currEditor.length === 1) {
-      return ([
-        <Cell
-          key={`${mode}-cell`}
-          ref={c => (this._cellRef[mode] = c)}
-          onDimensionChange={() => ace.instance && ace.instance.resize()}
-          style={style}
-        >
-          <div id={mode} ref={c => (ace.ref = c)} className={scss['editor-container']} />
-        </Cell>
-      ]);
-    }
-
-    return ([
+    const cell = (
       <Cell
         key={`${mode}-cell`}
         ref={c => (this._cellRef[mode] = c)}
@@ -270,10 +260,26 @@ class TextEditorPage extends Component {
         style={style}
       >
         <div id={mode} ref={c => (ace.ref = c)} className={scss['editor-container']} />
-      </Cell>,
+      </Cell>
+    );
+
+    if (currEditor.length === 1) {
+      return ([cell]);
+    }
+
+    return ([
+      cell,
       <Splitter
         key={`${mode}-splitter`}
-        onDragStart={() => this.setState({ showIframeMask: true })}
+        onDragStart={(data) => {
+          this._splitterData = data;
+          this.setState({ showIframeMask: true });
+        }}
+        onDragMove={() => {
+          Object.keys(this._ace).forEach(a => {
+            this._ace[a].instance && this._ace[a].instance.resize();
+          });
+        }}
         onDragStop={() => this.setState({ showIframeMask: false })}
         style={style}
       />
@@ -313,6 +319,7 @@ class TextEditorPage extends Component {
             <Iframe
               html={editor.html.content}
               css={editor.css.content}
+              javascript={editor.javascript.content}
               frameBorder={0}
               scrolling='yes'
               allowFullScreen

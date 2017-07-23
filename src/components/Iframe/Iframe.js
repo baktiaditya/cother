@@ -6,12 +6,14 @@ import scss from './Iframe.mod.scss';
 class Iframe extends Component {
   static propTypes = {
     html: PropTypes.string,
-    css: PropTypes.string
+    css: PropTypes.string,
+    javascript: PropTypes.string
   }
 
   static defaultProps = {
     html: '',
-    css: ''
+    css: '',
+    javascript: ''
   }
 
   _elemRef;
@@ -28,12 +30,16 @@ class Iframe extends Component {
     }
   }
 
-  componentWillUnmount() {
-    this._mounted = false;
+  shouldComponentUpdate(nextProps, nextState) {
+    const isHtmlEqual = this.props.html === nextProps.html;
+    const isCssEqual = this.props.css === nextProps.css;
+    const isJsEqual = this.props.javascript === nextProps.javascript;
+
+    return !isHtmlEqual || !isCssEqual || !isJsEqual;
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return (this.props.html !== nextProps.html) || (this.props.css !== nextProps.css);
+  componentWillUnmount() {
+    this._mounted = false;
   }
 
   updateContent() {
@@ -45,6 +51,7 @@ class Iframe extends Component {
     // let html = this.props.html;
     let html = this.props.html;
     const css = this.props.css;
+    const javascript = this.props.javascript;
     /* const bodyRegex = /<\/body>(?![\s\S]*<\/body>[\s\S]*$)/i; // find closing body tag
     if (bodyRegex.test(html)) {
       html = html.replace(bodyRegex, `<style type="text/css">${css}</style>\n</body>`);
@@ -77,6 +84,9 @@ class Iframe extends Component {
                 this.loadIframeCodeInline(iframeDoc, script);
               });
             }
+            if (javascript) {
+              this.loadIframeCodeInline(iframeDoc, javascript);
+            }
           });
         } else {
           this.loadIframeScriptSrc(iframeDoc, src);
@@ -87,6 +97,9 @@ class Iframe extends Component {
         scriptsArr.forEach((script) => {
           this.loadIframeCodeInline(iframeDoc, script);
         });
+      }
+      if (javascript) {
+        this.loadIframeCodeInline(iframeDoc, javascript);
       }
     }
 
@@ -168,6 +181,7 @@ class Iframe extends Component {
     } = this.props;
     delete props.html;
     delete props.css;
+    delete props.javascript;
 
     return (
       <iframe
