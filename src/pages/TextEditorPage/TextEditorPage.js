@@ -185,8 +185,6 @@ class TextEditorPage extends Component {
     .map(e => e.mode);
 
     if (JSON.stringify(prevEditor) !== JSON.stringify(currEditor)) {
-      this.resizeAllEditor();
-
       if (!this._splitterData) {
         return false;
       }
@@ -201,6 +199,8 @@ class TextEditorPage extends Component {
         }
       });
       this._splitterData = null;
+
+      this.resizeAllEditor();
     }
   }
 

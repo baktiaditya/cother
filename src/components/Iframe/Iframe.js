@@ -59,12 +59,18 @@ class Iframe extends Component {
     }*/
 
     // Extract <script /> tag from html
-    const { scriptsArr, scriptsSrcArr } = this.extractScript(html);
+    const { scriptsArr, scriptsSrcArr, stylesArr } = this.extractScriptStyle(html);
 
     // Remove <script /> tag from html
     const scriptRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
     while (scriptRegex.test(html)) {
       html = html.replace(scriptRegex, '');
+    }
+
+    // Remove <style /> tag from html
+    const styleRegex = /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi;
+    while (styleRegex.test(html)) {
+      html = html.replace(styleRegex, '');
     }
 
     const head = html.match(/<head[^>]*>[\s\S]*<\/head>/gi);
@@ -102,6 +108,14 @@ class Iframe extends Component {
       }
     }
 
+    // process inline <style /> in body
+    if (!_.isEmpty(stylesArr)) {
+      stylesArr.forEach((style) => {
+        this.loadIframeCodeInline(iframeDoc, style, 'css');
+      });
+    }
+
+    // process props.css
     if (css) {
       this.loadIframeCodeInline(iframeDoc, css, 'css');
     }
@@ -116,13 +130,15 @@ class Iframe extends Component {
     }
   }
 
-  extractScript(html) {
+  extractScriptStyle(html) {
     const div = document.createElement('div');
     div.setAttribute('id', 'fake');
     div.innerHTML = html;
     const scripts = div.getElementsByTagName('script');
+    const styles = div.getElementsByTagName('style');
     const scriptsArr = [];
     const scriptsSrcArr = [];
+    const stylesArr = [];
     for (let i = 0; i < scripts.length; i++) {
       if (scripts[i].src) {
         scriptsSrcArr.push(scripts[i].src);
@@ -132,9 +148,16 @@ class Iframe extends Component {
       }
     }
 
+    for (let i = 0; i < styles.length; i++) {
+      if (styles[i].innerHTML) {
+        stylesArr.push(styles[i].innerHTML);
+      }
+    }
+
     return {
       scriptsArr,
-      scriptsSrcArr
+      scriptsSrcArr,
+      stylesArr
     };
   }
 
