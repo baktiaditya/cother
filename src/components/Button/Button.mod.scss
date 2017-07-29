@@ -84,9 +84,14 @@ fieldset[disabled] a.btn {
 // Alternate buttons
 //
 
-.btn-white {
-  @include button-variant($btn-white-color, $btn-white-bg, $btn-white-bg-hover, $btn-white-border);
-  @include button-icon-variant($btn-white-color);
+.btn-outline-white {
+  @include button-outline-variant(
+    $btn-white-outline-color,
+    $btn-white-outline-bg,
+    $btn-white-outline-bg-active,
+    $btn-white-outline-border
+  );
+  @include button-outline-icon-variant($btn-white-outline-color);
 }
 
 //

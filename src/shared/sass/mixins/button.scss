@@ -8,37 +8,38 @@
   @include border-radius($border-radius);
 }
 
-@mixin button-variant($color, $background, $background-hover, $border) {
+@mixin button-outline-variant($color, $background, $background-active, $border) {
   color: $color;
   background-image: none;
   background-color: $background;
   border-color: $border;
 
   @include hover {
-    color: darken($color, 5%);
-    background-color: $background-hover;
-    border-color: darken($border, 5%);
+    color: $color;
+    background-color: rgba($background-active, .25);
+    border-color: $border;
   }
 
   &:focus,
   &.focus {
     color: darken($color, 5%);
     border-color: darken($border, 5%);
-    background-color: darken($background-hover, 5%);
+    background-color: darken($background-active, 5%);
   }
 
   &:active,
   &.active,
   .open > &.dropdown-toggle {
     color: invert($color);
-    background-color: transparent;
     border-color: darken($border, 5%);
+    background-color: $background-active;
 
     &:hover,
     &:focus,
     &.focus {
       color: invert($color);
-      border-color: darken($border, 5%);
+      border-color: darken($border, 10%);
+      background-color: $background-active;
     }
   }
 
@@ -54,7 +55,7 @@
   }
 }
 
-@mixin button-icon-variant($color) {
+@mixin button-outline-icon-variant($color) {
   .icon {
     color: $color;
   }

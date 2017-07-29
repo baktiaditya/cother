@@ -4,7 +4,6 @@
   position: absolute;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   height: $header-height;
   top: 0;
@@ -33,6 +32,23 @@
       margin: 0;
     }
   }
+}
+
+.header-col:nth-child(1) {
+  display: flex;
+  width: 50%;
+  flex-shrink: 1;
+}
+
+.header-col:nth-child(2) {
+  flex-shrink: 0;
+}
+
+.header-col:nth-child(3) {
+  display: flex;
+  width: 50%;
+  flex-shrink: 1;
+  flex-direction: row-reverse;
 }
 
 .user-list-indicator {

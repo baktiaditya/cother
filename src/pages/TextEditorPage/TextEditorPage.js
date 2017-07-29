@@ -300,11 +300,26 @@ class TextEditorPage extends Component {
     const headerPropsEditorArr = Object.keys(headerProps.editor).filter((e) => e !== 'output');
     headerProps.isLoading = JSON.stringify(editorReady) !== JSON.stringify(headerPropsEditorArr);
 
+    // all text editor hidden + iframe
+    let allEditorHidden = false;
+    if (!editor.css.show && !editor.html.show && !editor.javascript.show && !editor.output.show) {
+      allEditorHidden = true;
+    }
+
+    const logoImg = require('../../shared/assets/logo.svg');
+
     return (
       <div className={scss['container']}>
-        <Row>
-          <HeaderEditor {...headerProps} />
+        <HeaderEditor {...headerProps} />
 
+        <div
+          className={scss['artwork']}
+          style={{ display: !allEditorHidden ? 'none' : undefined }}
+        >
+          <img src={logoImg} alt='logo' />
+          <span>No active tab</span>
+        </div>
+        <Row style={{ display: allEditorHidden ? 'none' : undefined }}>
           {/* Editor */}
           {Object.keys(this._ace).map((mode) => this.renderEditor(mode))}
 

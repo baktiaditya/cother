@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
+import classNames from 'classnames/bind';
 import Loader from '../Loader/Loader';
 import Icon from '../Icon/Icon';
 import ButtonGroup from '../ButtonGroup/ButtonGroup';
 import Button from '../Button/Button';
 import scss from './HeaderEditor.mod.scss';
+
+const cx = classNames.bind(scss);
 
 class HeaderEditor extends Component {
   static propTypes = {
@@ -62,29 +65,40 @@ class HeaderEditor extends Component {
 
     return (
       <div className={scss['header']}>
-        <Link to='/' className={scss['brand']}>
-          <img src={logoImg} alt='Cother' />
-          <h1>{brand}</h1>
-        </Link>
+        <div className={cx('header-col')}>
+          <Link to='/' className={cx('brand')}>
+            <img src={logoImg} alt='Cother' />
+            <h1>{brand}</h1>
+          </Link>
+        </div>
 
         {/* Btn show hide editor */}
-        <ButtonGroup size='sm'>
-          {Object.keys(editor).map((mode) => (
-            <Button
-              key={mode}
-              active={this.state.btnEditor[mode]}
-              onClick={this.handleBtnEditorClick.bind(this, mode)}
-            >
-              {Object.keys(this._microCopy).includes(mode) ? this._microCopy[mode] : mode}
-            </Button>
-          ))}
-        </ButtonGroup>
+        <div className={cx('header-col')}>
+          <ButtonGroup size='sm'>
+            {Object.keys(editor).map((mode) => (
+              <Button
+                key={mode}
+                active={this.state.btnEditor[mode]}
+                onClick={this.handleBtnEditorClick.bind(this, mode)}
+                outline
+              >
+                {Object.keys(this._microCopy).includes(mode) ? this._microCopy[mode] : mode}
+              </Button>
+            ))}
+          </ButtonGroup>
+        </div>
 
         {isLoading
-          ? <Loader />
+          ? (
+            <div className={cx('header-col')}>
+              <Loader />
+            </div>
+          )
           : (
-            <div className={scss['user-list-indicator']}>
-              {this.props.totalUsers}&nbsp;<Icon size={20} icon='remove-red-eye' />
+            <div className={cx('header-col')}>
+              <div className={cx('user-list-indicator')}>
+                {this.props.totalUsers}&nbsp;<Icon size={20} icon='remove-red-eye' />
+              </div>
             </div>
           )
         }
