@@ -1,7 +1,4 @@
-import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
 import BasePage from '../pages/BasePage/BasePage';
-import HomePage from '../pages/HomePage/HomePage';
-import TextEditorPage from '../pages/TextEditorPage/TextEditorPage';
 
 /**
  * Please read react-router plain routes
@@ -10,16 +7,30 @@ import TextEditorPage from '../pages/TextEditorPage/TextEditorPage';
 export default [
   {
     path: '/not-found',
-    component: NotFoundPage
+    getComponent: (nextState, cb) => {
+      require.ensure([], (require) => {
+        cb(null, require('../pages/NotFoundPage/NotFoundPage').default);
+      });
+    }
   },
   {
     path: '/',
     component: BasePage,
-    indexRoute: { component: HomePage },
+    indexRoute: {
+      getComponent: (nextState, cb) => {
+        require.ensure([], (require) => {
+          cb(null, require('../pages/HomePage/HomePage').default);
+        });
+      }
+    },
     childRoutes: [
       {
         path: 'anonymous/:id',
-        component: TextEditorPage
+        getComponent: (nextState, cb) => {
+          require.ensure([], (require) => {
+            cb(null, require('../pages/TextEditorPage/TextEditorPage').default);
+          });
+        }
       }
     ]
   },

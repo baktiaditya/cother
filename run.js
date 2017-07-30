@@ -45,8 +45,13 @@ tasks.set('html', () => {
   const render = ejs.compile(template, { filename: `${global.PUBLIC_FOLDER}/index.tmpl.ejs` });
   const output = render({
     debug: global.DEBUG,
-    bundleCSS: assets.main.css,
-    bundleJS: assets.main.js,
+    css: {
+      main: assets.main.css
+    },
+    js: {
+      vendor: assets.vendor.js,
+      main: assets.main.js
+    },
     timestamp: Math.round(new Date().getTime() / 1000),
     config
   });
@@ -113,13 +118,19 @@ tasks.set('start', () => {
     });
     compiler.plugin('done', (stats) => {
       // Generate index.html page
-      const bundleJS = stats.compilation.chunks.find(x => x.name === 'main').files[0];
+      const jsVendor = stats.compilation.chunks.find(x => x.name === 'vendor').files[0];
+      const jsMain = stats.compilation.chunks.find(x => x.name === 'main').files[0];
       const template = fs.readFileSync(`${global.PUBLIC_FOLDER}/index.tmpl.ejs`, 'utf8');
       const render = ejs.compile(template, { filename: `${global.PUBLIC_FOLDER}/index.tmpl.ejs` });
       const serveConfig = {
         debug: global.DEBUG,
-        bundleCSS: false,
-        bundleJS: `/${bundleJS}`,
+        css: {
+          main: false
+        },
+        js: {
+          vendor: `/${jsVendor}`,
+          main: `/${jsMain}`
+        },
         timestamp: Math.round(new Date().getTime() / 1000),
         config
       };

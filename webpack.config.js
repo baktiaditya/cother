@@ -116,8 +116,20 @@ if (isDebug) {
 
 const config = {
   entry: {
-    main: [
+    vendor: [
       'babel-polyfill',
+      'react',
+      'react-dom',
+      'react-redux',
+      'react-router',
+      'redux',
+      'redux-thunk',
+      'prop-types',
+      'classnames',
+      'css-element-queries',
+      'lodash'
+    ],
+    main: [
       './src/index'
     ]
   },
@@ -141,6 +153,11 @@ const config = {
       path: path.resolve(__dirname, global.DIST_FOLDER),
       filename: 'assets.json',
       prettyPrint: true
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.[hash].js',
+      minChunks: Infinity
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.DefinePlugin({
@@ -217,7 +234,11 @@ if (isDebug) {
     filename: '[name].[hash].css',
     allChunks: true
   }));
-  config.plugins.push(new webpack.optimize.UglifyJsPlugin({ compress: { warnings: isVerbose } }));
+  config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: isVerbose
+    }
+  }));
   config.plugins.push(new webpack.optimize.AggressiveMergingPlugin());
   config.plugins.push(
     new ImageminPlugin({

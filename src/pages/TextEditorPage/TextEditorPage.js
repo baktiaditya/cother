@@ -172,7 +172,7 @@ class TextEditorPage extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState, prevContext) {
+  componentDidUpdate(prevProps, prevState) {
     // Reset cell width
     const prevEditor = Object.keys(prevState.editor)
     .map(e => ({ ...prevState.editor[e], mode: e }))

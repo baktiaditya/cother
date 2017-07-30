@@ -41,12 +41,13 @@
   <link href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" rel="stylesheet">
   <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js"></script>
 
-  <% if (bundleCSS){ %>
-  <link rel="stylesheet" href="<%= bundleCSS %>">
+  <% if (css.main){ %>
+  <link rel="stylesheet" href="<%= css.main %>">
   <% } %>
 </head>
 <body>
   <div id="__container"></div>
-  <script src="<%= bundleJS %>"></script>
+  <script src="<%= js.vendor %>"></script>
+  <script src="<%= js.main %>"></script>
 </body>
 </html>
