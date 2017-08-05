@@ -32,6 +32,10 @@
       margin: 0;
     }
   }
+
+  iframe {
+    display: block;
+  }
 }
 
 .header-col:nth-child(1) {
@@ -49,6 +53,12 @@
   width: 50%;
   flex-shrink: 1;
   flex-direction: row-reverse;
+  align-items: center;
+
+  iframe {
+    display: block;
+    margin-left: 12px;
+  }
 }
 
 .user-list-indicator {

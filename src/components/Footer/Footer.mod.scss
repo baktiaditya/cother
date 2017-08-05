@@ -11,13 +11,30 @@
   font-weight: 200;
 
   .footer-inner {
-    opacity: .85;
+    display: flex;
+    align-items: center;
   }
 
+  span,
   a {
+    opacity: .85;
     color: $white;
     font-weight: 300;
   }
+
+  a:first-of-type {
+    display: inline-block;
+    margin-right: 12px;
+  }
+
+  //.sep {
+  //  &::before {
+  //    display: inline-block;
+  //    content: "•";
+  //    margin-left: 10px;
+  //    margin-right: 10px;
+  //  }
+  //}
 }
 
 .footer-fixed {

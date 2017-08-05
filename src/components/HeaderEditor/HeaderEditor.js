@@ -6,6 +6,7 @@ import Loader from '../Loader/Loader';
 import Icon from '../Icon/Icon';
 import ButtonGroup from '../ButtonGroup/ButtonGroup';
 import Button from '../Button/Button';
+import { GITHUB_BTN_URL } from '../../shared/constants';
 import scss from './HeaderEditor.mod.scss';
 
 const cx = classNames.bind(scss);
@@ -96,6 +97,13 @@ class HeaderEditor extends Component {
           )
           : (
             <div className={cx('header-col')}>
+              <iframe
+                src={GITHUB_BTN_URL}
+                frameBorder={0}
+                scrolling={0}
+                width={54}
+                height={20}
+              />
               <div className={cx('user-list-indicator')}>
                 {this.props.totalUsers}&nbsp;<Icon size={20} icon='remove-red-eye' />
               </div>

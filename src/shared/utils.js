@@ -31,3 +31,25 @@ export function slugify(string) {
 export const isBrowser = !!((typeof window !== 'undefined' && window.document && window.document.createElement));
 export const isSafari = isBrowser ? window.navigator.vendor && window.navigator.vendor.indexOf('Apple') > -1 &&
   window.navigator.userAgent && !window.navigator.userAgent.match('CriOS') : false;
+
+/**
+ * Build url with query string
+ *
+ * @param {string } url
+ * @param {object} parameters
+ * @returns {*}
+ * @see https://stackoverflow.com/questions/316781/how-to-build-query-string-with-javascript
+ */
+export const buildUrl = (url, parameters) => {
+  let qs = '';
+  let result = '';
+  Object.keys(parameters).forEach((key) => {
+    const value = parameters[key];
+    qs += `${encodeURIComponent(key)}=${encodeURIComponent(value)}&`;
+  });
+  if (qs.length > 0) {
+    qs = qs.substring(0, qs.length - 1); // chop off last "&"
+    result = `${url}?${qs}`;
+  }
+  return result;
+};
