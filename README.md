@@ -1,4 +1,4 @@
-## Cother
+# Cother
 Cother A real-time collaborative code editor and previewer. This project is for fun and i just want to know [firepad](https://github.com/firebase/firepad) capabilities.
 
 ### Demo
