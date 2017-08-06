@@ -3,10 +3,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import { generateRandomString, slugify } from '../../shared/utils';
+import Footer from '../../components/Footer/Footer';
 import scss from './HomePage.mod.scss';
 import scssString from './HomePage.string.scss';
-
-import Footer from '../../components/Footer/Footer';
 
 class HomePage extends Component {
   static displayName = 'HomePage';
