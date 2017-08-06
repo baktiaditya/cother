@@ -15,7 +15,7 @@ class HomePage extends Component {
   componentWillMount() {
     // Page title
     const titleTag = document.getElementsByTagName('title')[0];
-    titleTag.innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} Collaborative Text Editor`;
+    titleTag.innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} Collaborative Code Editor`;
 
     // Create custom <style /> in <head />
     const head = document.head || document.getElementsByTagName('head')[0];

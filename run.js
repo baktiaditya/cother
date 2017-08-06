@@ -9,7 +9,8 @@ const firebaseConfig = require('./firebase.config');
 
 // Configuration settings
 let config = {
-  title: 'Cother • Collaborative Text Editor', // Website title
+  title: 'Cother • Collaborative Code Editor', // Website title
+  description: 'Cother is a real-time collaborative code editor and previewer.', // Website description
   url: 'https://cother.bvap.me' // Website URL
 };
 

@@ -23,9 +23,10 @@ const createUniqueIdGenerator = () => {
     do {
       // Class name cannot start with a number.
       nextId = generateNextId();
-    } while (/^[0-9]/.test(nextId));
+    }
+    while (/^[0-9]/.test(nextId));
 
-    index[name] = generateNextId();
+    index[name] = nextId;
 
     return index[name];
   };

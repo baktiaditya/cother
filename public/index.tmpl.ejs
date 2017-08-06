@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= config.title %></title>
+  <meta name="description" content="<%= config.description %>">
+
   <!-- checking hostname -->
   <% if (config.url !== 'https://' + config.projectID + '.firebaseapp.com') { %>
   <script>
