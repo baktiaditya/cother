@@ -3,8 +3,10 @@ const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const AssetsPlugin = require('assets-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const imageminMozjpeg = require('imagemin-mozjpeg');
+const uniqueIdGenerator = require('./uniqueIdGenerator');
 const pkg = require('./package.json');
 
 const isDebug = global.DEBUG;
@@ -21,12 +23,25 @@ const postcssPlugins = [
   require('postcss-flexibility')
 ];
 
-const cssModuleParam = isModule => ({
-  sourceMap: isDebug,
-  modules: isModule,
-  localIdentName: isDebug ? '[name]_[local]' : '[hash:base64]',
-  minimize: !isDebug
-});
+const cssModuleParam = (isModule) => {
+  const param = {
+    sourceMap: isDebug,
+    modules: isModule,
+    minimize: !isDebug,
+    // localIdentName: isDebug ? '[name]__[local]__[hash:base64:5]' : '[hash:base64]',
+    localIdentName: '[name]__[local]__[hash:base64:5]'
+  };
+
+  if (!isDebug) {
+    // https://goo.gl/B2fe2b
+    param.getLocalIdent = (context, localIdentName, localName) => {
+      const componentName = context.resourcePath.split('/').slice(-2, -1);
+      return `${uniqueIdGenerator(componentName)}_${uniqueIdGenerator(localName)}`;
+    };
+  }
+
+  return param;
+};
 
 const cssLoader = {
   test: /\.css$/,
@@ -234,6 +249,7 @@ if (isDebug) {
     filename: '[name].[hash].css',
     allChunks: true
   }));
+  config.plugins.push(new CssoWebpackPlugin({ sourceMap: false }));
   config.plugins.push(new webpack.optimize.UglifyJsPlugin({
     compress: {
       warnings: isVerbose
