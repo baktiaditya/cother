@@ -4,49 +4,38 @@
     "sourceType": "module",
     "allowImportExportEverywhere": true
   },
-  "extends": "airbnb",
   "env": {
     "browser": true,
     "node": true
   },
+  "extends": [
+    "standard",
+    "standard-react"
+  ],
   "rules": {
-    "arrow-parens": ["off"],
-    "class-methods-use-this": "off",
-    "comma-dangle": ["error", "never"],
-    "consistent-return": "off",
-    "dot-notation": "off",
-    "generator-star-spacing": "off",
-    "global-require": "off",
-    "no-plusplus": "off",
-    "no-return-assign": "off",
-    "no-underscore-dangle": "off",
-    "no-unused-expressions": "off",
-    "compat/compat": "error",
-    "import/no-unresolved": "error",
-    "import/no-extraneous-dependencies": "off",
-    "import/prefer-default-export": "off",
-    "jsx-quotes": ["error", "prefer-single"],
-    "jsx-a11y/iframe-has-title": "off",
-    "no-console": "off",
-    "no-use-before-define": "off",
-    "no-lonely-if": "off",
-    "no-multi-assign": "off",
-    "promise/param-names": "error",
-    "promise/always-return": "error",
-    "promise/catch-or-return": "error",
-    "promise/no-native": "off",
-    "react/forbid-prop-types": "off",
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "no-useless-escape": "off",
+    "semi": [
+      "error",
+      "always"
+    ],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "never",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "spaced-comment": "off",
     "react/jsx-no-bind": "off",
-    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
-    "react/no-danger": "off",
-    "react/no-find-dom-node": "off",
-    "react/prefer-stateless-function": "off",
-    "react/require-default-props": "off",
     "react/sort-comp": [
       1,
       {
         "order": [
-          "type-annotations",
           "static-methods",
           "/^_.+$/",
           "constructor",
@@ -57,19 +46,5 @@
         ]
       }
     ]
-  },
-  "plugins": [
-    "flowtype",
-    "import",
-    "promise",
-    "compat",
-    "react"
-  ],
-  "settings": {
-    "import/resolver": {
-      "webpack": {
-        "config": "webpack.config.eslint.js"
-      }
-    }
   }
 }

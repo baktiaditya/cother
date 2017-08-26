@@ -21,8 +21,8 @@ class TextEditorPage extends Component {
 
   static propTypes = {
     // from react-router
-    params: PropTypes.object
-  }
+    params: PropTypes.object,
+  };
 
   constructor(props) {
     super(props);
@@ -38,16 +38,16 @@ class TextEditorPage extends Component {
     this._ace = {
       html: {
         show: true,
-        defaultContent: require('./templates/defaultHtml.html')
+        defaultContent: require('./templates/defaultHtml.html'),
       },
       css: {
         show: true,
-        defaultContent: require('./templates/defaultCss.string.css')
+        defaultContent: require('./templates/defaultCss.string.css'),
       },
       javascript: {
         show: false,
-        defaultContent: '// JS\n\nconsole.log(jQuery.fn.jquery);'
-      }
+        defaultContent: '// JS\n\nconsole.log(jQuery.fn.jquery);',
+      },
     };
 
     this._firepad = {};
@@ -61,14 +61,14 @@ class TextEditorPage extends Component {
       editorReady: [],
       user: {},
       userList: [],
-      showIframeMask: false
+      showIframeMask: false,
     };
 
     // Set editor state
     Object.keys(this._ace).forEach(mode => {
       this.state.editor[mode] = {
         show: this._ace[mode].show,
-        content: ''
+        content: '',
       };
     });
     this.state.editor.output = { show: true };
@@ -88,7 +88,7 @@ class TextEditorPage extends Component {
     this._userDbRef.getParent().on('value', (snapshot) => {
       if (snapshot.val()) {
         this.setState({
-          userList: snapshot.val()
+          userList: snapshot.val(),
         });
       }
     });
@@ -130,7 +130,7 @@ class TextEditorPage extends Component {
         showGutter: false,
         showPrintMargin: false,
         vScrollBarAlwaysVisible: false,
-        theme: 'ace/theme/tomorrow_night'
+        theme: 'ace/theme/tomorrow_night',
       });
       editor.on('change', () => {
         if (this.state.editor[mode].content !== editor.getValue()) {
@@ -139,9 +139,9 @@ class TextEditorPage extends Component {
               ...this.state.editor,
               [mode]: {
                 ...this.state.editor[mode],
-                content: editor.getValue()
-              }
-            }
+                content: editor.getValue(),
+              },
+            },
           });
         }
       });
@@ -149,16 +149,16 @@ class TextEditorPage extends Component {
       this._ace[mode].instance = editor;
       this._firepad[mode] = window.Firepad.fromACE(this._firepadDbRef[mode], editor, {
         userId: this._userId,
-        defaultText: this._ace[mode].defaultContent
+        defaultText: this._ace[mode].defaultContent,
       });
       this._firepad[mode].on('ready', () => this.setState({
         // set user
         user: {
           id: this._userId,
           color: this._firepad[mode].firebaseAdapter_.color_,
-          displayName: this._userDisplayName
+          displayName: this._userDisplayName,
         },
-        editorReady: [...this.state.editorReady, mode]
+        editorReady: [...this.state.editorReady, mode],
       }));
     });
   }
@@ -167,7 +167,7 @@ class TextEditorPage extends Component {
     if (JSON.stringify(this.state.user) !== JSON.stringify(nextState.user)) {
       this._userDbRef.set({
         displayName: nextState.user.displayName,
-        color: nextState.user.color
+        color: nextState.user.color,
       });
     }
   }
@@ -175,14 +175,14 @@ class TextEditorPage extends Component {
   componentDidUpdate(prevProps, prevState) {
     // Reset cell width
     const prevEditor = Object.keys(prevState.editor)
-    .map(e => ({ ...prevState.editor[e], mode: e }))
-    .filter((e) => e.show === true)
-    .map(e => e.mode);
+      .map(e => ({ ...prevState.editor[e], mode: e }))
+      .filter((e) => e.show === true)
+      .map(e => e.mode);
 
     const currEditor = Object.keys(this.state.editor)
-    .map(e => ({ ...this.state.editor[e], mode: e }))
-    .filter((e) => e.show === true)
-    .map(e => e.mode);
+      .map(e => ({ ...this.state.editor[e], mode: e }))
+      .filter((e) => e.show === true)
+      .map(e => e.mode);
 
     if (JSON.stringify(prevEditor) !== JSON.stringify(currEditor)) {
       if (!this._splitterData) {
@@ -234,13 +234,16 @@ class TextEditorPage extends Component {
         ...this.state.editor,
         [mode]: {
           ...this.state.editor[mode],
-          show: !this.state.editor[mode].show
-        }
-      }
+          show: !this.state.editor[mode].show,
+        },
+      },
+    }, () => {
+      this.resizeAllEditor();
     });
-  }
+  };
 
   resizeAllEditor() {
+    console.log('resizeAllEditor');
     Object.keys(this._ace).forEach(a => {
       this._ace[a].instance && this._ace[a].instance.resize();
     });
@@ -251,9 +254,9 @@ class TextEditorPage extends Component {
     const isHide = !this.state.editor[mode].show;
     const style = { display: isHide ? 'none' : undefined };
     const currEditor = Object.keys(this.state.editor)
-    .map(e => ({ ...this.state.editor[e], mode: e }))
-    .filter((e) => e.show === true)
-    .map(e => e.mode);
+      .map(e => ({ ...this.state.editor[e], mode: e }))
+      .filter((e) => e.show === true)
+      .map(e => e.mode);
 
     const cell = (
       <Cell
@@ -281,7 +284,7 @@ class TextEditorPage extends Component {
         onDragMove={() => this.resizeAllEditor()}
         onDragStop={() => this.setState({ showIframeMask: false })}
         style={style}
-      />
+      />,
     ]);
   }
 
@@ -289,13 +292,13 @@ class TextEditorPage extends Component {
     const {
       editor,
       editorReady,
-      userList
+      userList,
     } = this.state;
 
     const headerProps = {
       editor,
       onBtnEditorClick: this.onBtnEditorClick,
-      totalUsers: !_.isEmpty(userList) ? Object.keys(userList).length : 0
+      totalUsers: !_.isEmpty(userList) ? Object.keys(userList).length : 0,
     };
     const headerPropsEditorArr = Object.keys(headerProps.editor).filter((e) => e !== 'output');
     headerProps.isLoading = JSON.stringify(editorReady) !== JSON.stringify(headerPropsEditorArr);
