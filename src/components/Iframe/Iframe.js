@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import PropTypes from 'prop-types';
 import scss from './Iframe.mod.scss';
 
@@ -8,14 +8,14 @@ class Iframe extends Component {
   static propTypes = {
     html: PropTypes.string,
     css: PropTypes.string,
-    javascript: PropTypes.string
-  }
+    javascript: PropTypes.string,
+  };
 
   static defaultProps = {
     html: '',
     css: '',
-    javascript: ''
-  }
+    javascript: '',
+  };
 
   _elemRef;
   _mounted = false;
@@ -25,18 +25,18 @@ class Iframe extends Component {
     this.updateContent();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this._mounted) {
-      this.updateContent();
-    }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     const isHtmlEqual = this.props.html === nextProps.html;
     const isCssEqual = this.props.css === nextProps.css;
     const isJsEqual = this.props.javascript === nextProps.javascript;
 
     return !isHtmlEqual || !isCssEqual || !isJsEqual;
+  }
+
+  componentDidUpdate() {
+    if (this._mounted) {
+      this.updateContent();
+    }
   }
 
   componentWillUnmount() {
@@ -77,8 +77,8 @@ class Iframe extends Component {
     const body = html.match(/<body[^>]*>[\s\S]*<\/body>/gi);
 
     // Set iframe content
-    iframeDoc.head.innerHTML = !_.isEmpty(head) ? head[0] : '';
-    iframeDoc.body.innerHTML = !_.isEmpty(body) ? body[0] : '';
+    iframeDoc.head.innerHTML = !isEmpty(head) ? head[0] : '';
+    iframeDoc.body.innerHTML = !isEmpty(body) ? body[0] : '';
 
     if (scriptsSrcArr.length > 0) {
       scriptsSrcArr.forEach((src, num) => {
@@ -109,7 +109,7 @@ class Iframe extends Component {
     }
 
     // process inline <style /> in body
-    if (!_.isEmpty(stylesArr)) {
+    if (!isEmpty(stylesArr)) {
       stylesArr.forEach((style) => {
         this.loadIframeCodeInline(iframeDoc, style, 'css');
       });
@@ -157,7 +157,7 @@ class Iframe extends Component {
     return {
       scriptsArr,
       scriptsSrcArr,
-      stylesArr
+      stylesArr,
     };
   }
 

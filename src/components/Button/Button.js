@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames/bind';
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import Icon from '../Icon/Icon';
 import Loader from '../Loader/Loader';
 import * as scss from './Button.mod.scss';
@@ -10,10 +10,10 @@ import * as scss from './Button.mod.scss';
 const ICON_PROPS_DEFAULT = {
   icon: undefined,
   position: 'left',
-  size: undefined
+  size: undefined,
 };
 
-class Button extends React.Component {
+class Button extends Component {
   static displayName = 'Button';
 
   static propTypes = {
@@ -27,7 +27,7 @@ class Button extends React.Component {
     iconProps: PropTypes.shape({
       icon: PropTypes.string,
       size: PropTypes.number,
-      position: PropTypes.string
+      position: PropTypes.string,
     }),
     isLoading: PropTypes.bool,
     label: PropTypes.node,
@@ -38,7 +38,7 @@ class Button extends React.Component {
     style: PropTypes.object,
     tag: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     type: PropTypes.oneOf(['button', 'submit', 'reset']),
-    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   };
 
   static defaultProps = {
@@ -47,7 +47,7 @@ class Button extends React.Component {
     size: 'default',
     outline: false,
     tag: 'button',
-    type: 'button'
+    type: 'button',
   };
 
   _iconProps = { ...ICON_PROPS_DEFAULT, ...this.props.iconProps };
@@ -71,11 +71,11 @@ class Button extends React.Component {
 
     if (!this.props.isLoading && nextProps.isLoading) {
       const style = window.getComputedStyle(btn, null);
-      btn.style.width = !_.isEmpty(this._inlineWidth) ? this._inlineWidth : style.width;
-      btn.style.height = !_.isEmpty(this._inlineHeight) ? this._inlineHeight : style.height;
+      btn.style.width = !isEmpty(this._inlineWidth) ? this._inlineWidth : style.width;
+      btn.style.height = !isEmpty(this._inlineHeight) ? this._inlineHeight : style.height;
     } else if (this.props.isLoading && !nextProps.isLoading) {
-      btn.style.width = !_.isEmpty(this._inlineWidth) ? this._inlineWidth : '';
-      btn.style.height = !_.isEmpty(this._inlineHeight) ? this._inlineHeight : '';
+      btn.style.width = !isEmpty(this._inlineWidth) ? this._inlineWidth : '';
+      btn.style.height = !isEmpty(this._inlineHeight) ? this._inlineHeight : '';
     }
   }
 
@@ -104,7 +104,7 @@ class Button extends React.Component {
     const { icon, position: iconPosition, size: iconSize } = this._iconProps;
 
     let {
-      tag: Tag
+      tag: Tag,
     } = this.props;
 
     if (props.href && Tag === 'button') {
@@ -128,8 +128,8 @@ class Button extends React.Component {
         'btn-no-text': !btnText,
         'btn-is-loading': isLoading,
         active,
-        disabled
-      }
+        disabled,
+      },
     );
 
     // Loader color
@@ -162,7 +162,7 @@ class Button extends React.Component {
       ...this.props.loaderProps,
       className: scss['loader'],
       color: loaderColor,
-      size
+      size,
     };
 
     return (

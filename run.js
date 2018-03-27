@@ -2,23 +2,23 @@
 const fs = require('fs');
 const del = require('del');
 const ejs = require('ejs');
-const firebase = require('firebase-tools');
 const webpack = require('webpack');
 const minify = require('html-minifier').minify;
 const firebaseConfig = require('./firebase.config');
+const spawn = require('child_process').spawn;
 
 // Configuration settings
 let config = {
   title: 'Cother • Collaborative Code Editor', // Website title
   description: 'Cother is a real-time collaborative code editor and previewer.', // Website description
-  url: 'https://cother.bvap.me' // Website URL
 };
 
 config = Object.assign({}, config, firebaseConfig);
 
 global.DEBUG = process.argv.includes('--debug') || false;
 global.PUBLIC_FOLDER = 'public';
-global.DIST_FOLDER = `${global.PUBLIC_FOLDER}/dist`;
+global.BUILD_FOLDER = 'build';
+global.DIST_FOLDER = `${global.BUILD_FOLDER}/dist`;
 global.PORT = process.env.PORT || 4040;
 
 const tasks = new Map(); // The collection of automation tasks ('clean', 'build', 'publish', etc.)
@@ -35,7 +35,7 @@ function run(task) {
 //
 // Clean up the output directory
 // -----------------------------------------------------------------------------
-tasks.set('clean', () => del([`${global.DIST_FOLDER}/*`], { dot: true }));
+tasks.set('clean', () => del([`${global.BUILD_FOLDER}/*`], { dot: true }));
 
 //
 // Copy ./index.html into the /public folder
@@ -47,19 +47,26 @@ tasks.set('html', () => {
   const output = render({
     debug: global.DEBUG,
     css: {
-      main: assets.main.css
+      main: assets.main.css,
     },
     js: {
       vendor: assets.vendor.js,
-      main: assets.main.js
+      main: assets.main.js,
     },
     timestamp: Math.round(new Date().getTime() / 1000),
-    config
+    config,
   });
-  fs.writeFileSync(`${global.PUBLIC_FOLDER}/index.html`, minify(output, {
+  if (!fs.existsSync(global.BUILD_FOLDER)) {
+    fs.mkdirSync(global.BUILD_FOLDER);
+  }
+  fs.writeFileSync(`${global.BUILD_FOLDER}/index.html`, minify(output, {
     removeComments: true,
-    collapseWhitespace: true
+    collapseWhitespace: true,
   }), 'utf8');
+
+  // copy favicon
+  fs.createReadStream(`${global.PUBLIC_FOLDER}/favicon.png`)
+    .pipe(fs.createWriteStream(`${global.BUILD_FOLDER}/favicon.png`));
 });
 
 //
@@ -80,15 +87,28 @@ tasks.set('bundle', () => new Promise((resolve, reject) => {
 //
 // Build and publish
 // -----------------------------------------------------------------------------
-tasks.set('publish', () => {
+tasks.set('deploy', () => {
+  const login = () =>
+    new Promise(resolve => {
+      const cmd = spawn('./node_modules/.bin/firebase', ['login'], { stdio: 'inherit' });
+      cmd.on('close', code => {
+        resolve(code);
+      });
+    });
+
+  const deploy = () =>
+    new Promise(resolve => {
+      const cmd = spawn('./node_modules/.bin/firebase', ['deploy'], {
+        stdio: 'inherit',
+      });
+      cmd.on('close', code => {
+        resolve(code);
+      });
+    });
+
   return run('build')
-  .then(() => firebase.login({ nonInteractive: false }))
-  .then(() => firebase.deploy({
-    project: firebaseConfig.projectID,
-    cwd: __dirname
-  }))
-  .then(() => console.log(`Deployed to ${config.url}`))
-  .then(() => setTimeout(() => process.exit(), 50));
+    .then(() => login())
+    .then(() => deploy());
 });
 
 //
@@ -96,9 +116,9 @@ tasks.set('publish', () => {
 // -----------------------------------------------------------------------------
 tasks.set('build', () => {
   return Promise.resolve()
-  .then(() => run('clean'))
-  .then(() => run('bundle'))
-  .then(() => run('html'));
+    .then(() => run('clean'))
+    .then(() => run('bundle'))
+    .then(() => run('html'));
 });
 
 //
@@ -107,68 +127,68 @@ tasks.set('build', () => {
 tasks.set('start', () => {
   let count = 0;
   return run('clean')
-  .then(() => new Promise((resolve) => {
-    const bs = require('browser-sync').create();
-    const webpackConfig = require('./webpack.config');
-    const compiler = webpack(webpackConfig);
-    // Node.js middleware that compiles application in watch mode with HMR support
-    // http://webpack.github.io/docs/webpack-dev-middleware.html
-    const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
-      publicPath: webpackConfig.output.publicPath,
-      stats: webpackConfig.stats
-    });
-    compiler.plugin('done', (stats) => {
-      // Generate index.html page
-      const jsVendor = stats.compilation.chunks.find(x => x.name === 'vendor').files[0];
-      const jsMain = stats.compilation.chunks.find(x => x.name === 'main').files[0];
-      const template = fs.readFileSync(`${global.PUBLIC_FOLDER}/index.tmpl.ejs`, 'utf8');
-      const render = ejs.compile(template, { filename: `${global.PUBLIC_FOLDER}/index.tmpl.ejs` });
-      const serveConfig = {
-        debug: global.DEBUG,
-        css: {
-          main: false
-        },
-        js: {
-          vendor: `/${jsVendor}`,
-          main: `/${jsMain}`
-        },
-        timestamp: Math.round(new Date().getTime() / 1000),
-        config
-      };
-      if (!global.DEBUG) {
-        const assets = JSON.parse(fs.readFileSync(`${global.DIST_FOLDER}/assets.json`, 'utf8'));
-        serveConfig.bundleJS = assets.main.js;
-        serveConfig.bundleCSS = assets.main.css;
-      }
-      const output = render(serveConfig);
-      if (!fs.existsSync(global.DIST_FOLDER)) {
-        fs.mkdirSync(global.DIST_FOLDER);
-      }
-      fs.writeFileSync(`${global.PUBLIC_FOLDER}/index.html`, output, 'utf8');
-
-      // Launch Browsersync after the initial bundling is complete
-      // For more information visit https://browsersync.io/docs/options
-      if (++count === 1) {
-        const middleware = [
-          webpackDevMiddleware,
-          require('webpack-hot-middleware')(compiler),
-          require('connect-history-api-fallback')()
-        ];
-        if (!global.DEBUG) {
-          middleware.splice(1, 1); // remove `webpack-hot-middleware`
-        }
-        bs.init({
-          port: global.PORT,
-          ui: { port: Number(global.PORT) + 1 },
-          server: {
-            baseDir: global.PUBLIC_FOLDER,
-            middleware
+    .then(() => new Promise((resolve) => {
+      const bs = require('browser-sync').create();
+      const webpackConfig = require('./webpack.config');
+      const compiler = webpack(webpackConfig);
+      // Node.js middleware that compiles application in watch mode with HMR support
+      // http://webpack.github.io/docs/webpack-dev-middleware.html
+      const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
+        publicPath: webpackConfig.output.publicPath,
+        stats: webpackConfig.stats,
+      });
+      compiler.plugin('done', (stats) => {
+        // Generate index.html page
+        const jsVendor = stats.compilation.chunks.find(x => x.name === 'vendor').files[0];
+        const jsMain = stats.compilation.chunks.find(x => x.name === 'main').files[0];
+        const template = fs.readFileSync(`${global.PUBLIC_FOLDER}/index.tmpl.ejs`, 'utf8');
+        const render = ejs.compile(template, { filename: `${global.PUBLIC_FOLDER}/index.tmpl.ejs` });
+        const serveConfig = {
+          debug: global.DEBUG,
+          css: {
+            main: false,
           },
-          open: false
-        }, resolve);
-      }
-    });
-  }));
+          js: {
+            vendor: `/${jsVendor}`,
+            main: `/${jsMain}`,
+          },
+          timestamp: Math.round(new Date().getTime() / 1000),
+          config,
+        };
+        if (!global.DEBUG) {
+          const assets = JSON.parse(fs.readFileSync(`${global.DIST_FOLDER}/assets.json`, 'utf8'));
+          serveConfig.bundleJS = assets.main.js;
+          serveConfig.bundleCSS = assets.main.css;
+        }
+        const output = render(serveConfig);
+        if (!fs.existsSync(global.DIST_FOLDER)) {
+          fs.mkdirSync(global.DIST_FOLDER);
+        }
+        fs.writeFileSync(`${global.BUILD_FOLDER}/index.html`, output, 'utf8');
+
+        // Launch Browsersync after the initial bundling is complete
+        // For more information visit https://browsersync.io/docs/options
+        if (++count === 1) {
+          const middleware = [
+            webpackDevMiddleware,
+            require('webpack-hot-middleware')(compiler),
+            require('connect-history-api-fallback')(),
+          ];
+          if (!global.DEBUG) {
+            middleware.splice(1, 1); // remove `webpack-hot-middleware`
+          }
+          bs.init({
+            port: global.PORT,
+            ui: { port: Number(global.PORT) + 1 },
+            server: {
+              baseDir: global.BUILD_FOLDER,
+              middleware,
+            },
+            open: false,
+          }, resolve);
+        }
+      });
+    }));
 });
 
 // Execute the specified task or default one. E.g.: node run build

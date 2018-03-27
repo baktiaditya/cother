@@ -12,14 +12,14 @@ const isDebug = global.DEBUG;
 const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v');
 const babelConfig = Object.assign({}, pkg.babel, {
   babelrc: false,
-  cacheDirectory: isDebug
+  cacheDirectory: isDebug,
 });
 
 const postcssPlugins = [
   autoprefixer({
-    browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 9']
+    browsers: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 9'],
   }),
-  require('postcss-flexibility')
+  require('postcss-flexibility'),
 ];
 
 const cssModuleParam = (isModule) => {
@@ -28,7 +28,7 @@ const cssModuleParam = (isModule) => {
     modules: isModule,
     minimize: !isDebug,
     // localIdentName: isDebug ? '[name]__[local]__[hash:base64:5]' : '[hash:base64]',
-    localIdentName: '[name]__[local]__[hash:base64:5]'
+    localIdentName: '[name]__[local]__[hash:base64:5]',
   };
 
   if (!isDebug) {
@@ -44,44 +44,44 @@ const cssModuleParam = (isModule) => {
 
 const cssLoader = {
   test: /\.css$/,
-  exclude: [/\.mod\.css/, /\.string\.css/]
+  exclude: [/\.mod\.css/, /\.string\.css/],
 };
 
 const cssModLoader = {
-  test: /\.mod\.css?$/
+  test: /\.mod\.css?$/,
 };
 
 const scssLoader = {
   test: /\.scss$/,
-  exclude: [/\.mod\.scss$/, /\.string\.scss$/]
+  exclude: [/\.mod\.scss$/, /\.string\.scss$/],
 };
 
 const scssModLoader = {
-  test: /\.mod\.scss$/
+  test: /\.mod\.scss$/,
 };
 
 if (isDebug) {
   cssLoader.use = [
     'style-loader',
     { loader: 'css-loader', options: cssModuleParam(false) },
-    { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } }
+    { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } },
   ];
   cssModLoader.use = [
     'style-loader',
     { loader: 'css-loader', options: cssModuleParam(true) },
-    { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } }
+    { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } },
   ];
   scssLoader.use = [
     'style-loader',
     { loader: 'css-loader', options: cssModuleParam(false) },
     { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } },
-    'sass-loader'
+    'sass-loader',
   ];
   scssModLoader.use = [
     'style-loader',
     { loader: 'css-loader', options: cssModuleParam(true) },
     { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } },
-    'sass-loader'
+    'sass-loader',
   ];
 } else {
   cssLoader.use = ExtractTextPlugin.extract({
@@ -89,42 +89,42 @@ if (isDebug) {
     use: [
       {
         loader: 'css-loader',
-        options: Object.assign({}, cssModuleParam(false), { importLoaders: 1 })
+        options: Object.assign({}, cssModuleParam(false), { importLoaders: 1 }),
       },
-      { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } }
-    ]
+      { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } },
+    ],
   });
   cssModLoader.use = ExtractTextPlugin.extract({
     fallback: 'style-loader',
     use: [
       {
         loader: 'css-loader',
-        options: Object.assign({}, cssModuleParam(true), { importLoaders: 1 })
+        options: Object.assign({}, cssModuleParam(true), { importLoaders: 1 }),
       },
-      { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } }
-    ]
+      { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } },
+    ],
   });
   scssLoader.use = ExtractTextPlugin.extract({
     fallback: 'style-loader',
     use: [
       {
         loader: 'css-loader',
-        options: Object.assign({}, cssModuleParam(false), { importLoaders: 2 })
+        options: Object.assign({}, cssModuleParam(false), { importLoaders: 2 }),
       },
       { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } },
-      'sass-loader'
-    ]
+      'sass-loader',
+    ],
   });
   scssModLoader.use = ExtractTextPlugin.extract({
     fallback: 'style-loader',
     use: [
       {
         loader: 'css-loader',
-        options: Object.assign({}, cssModuleParam(true), { importLoaders: 2 })
+        options: Object.assign({}, cssModuleParam(true), { importLoaders: 2 }),
       },
       { loader: 'postcss-loader', options: { plugins: () => [...postcssPlugins] } },
-      'sass-loader'
-    ]
+      'sass-loader',
+    ],
   });
 }
 
@@ -142,11 +142,11 @@ const config = {
       'prop-types',
       'classnames',
       'css-element-queries',
-      'lodash'
+      'lodash',
     ],
     main: [
-      './src/index'
-    ]
+      './src/index',
+    ],
   },
   // Developer tool to enhance debugging, source maps
   // http://webpack.github.io/docs/configuration.html#devtool
@@ -161,25 +161,25 @@ const config = {
     chunks: true,
     chunkModules: isVerbose,
     cached: isVerbose,
-    cachedAssets: isVerbose
+    cachedAssets: isVerbose,
   },
   plugins: [
     new AssetsPlugin({
       path: path.resolve(__dirname, global.DIST_FOLDER),
       filename: 'assets.json',
-      prettyPrint: true
+      prettyPrint: true,
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       filename: 'vendor.[hash].js',
-      minChunks: Infinity
+      minChunks: Infinity,
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: isDebug ? JSON.stringify('development') : JSON.stringify('production')
-      }
-    })
+        NODE_ENV: isDebug ? JSON.stringify('development') : JSON.stringify('production'),
+      },
+    }),
   ],
   module: {
     rules: [
@@ -187,7 +187,7 @@ const config = {
         test: /\.jsx?$/,
         loaders: [`babel-loader?${JSON.stringify(babelConfig)}`],
         include: __dirname,
-        exclude: /(node_modules|bower_components)/
+        exclude: /(node_modules|bower_components)/,
       },
       cssLoader,
       cssModLoader,
@@ -195,44 +195,44 @@ const config = {
       scssModLoader,
       {
         test: /\.string\.css?$/,
-        loader: 'css-to-string-loader!css-loader'
+        loader: 'css-to-string-loader!css-loader',
       },
       {
         test: /\.string\.scss?$/,
-        loader: 'css-to-string-loader!css-loader!sass-loader'
+        loader: 'css-to-string-loader!css-loader!sass-loader',
       },
       {
         test: /\.json$/,
-        loader: 'json-loader'
+        loader: 'json-loader',
       },
       {
         test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|csv)(\?.*)?$/,
         loader: 'file-loader',
         query: {
-          name: 'media/[hash].[ext]'
-        }
+          name: 'media/[hash].[ext]',
+        },
       },
       {
         test: /\.(mp4|webm|wav|mp3|m4a|aac|ogg)(\?.*)?$/,
         loader: 'url-loader',
         query: {
           limit: 10000,
-          name: 'media/[hash].[ext]'
-        }
+          name: 'media/[hash].[ext]',
+        },
       },
       {
         test: /\.(html|txt)(\?.*)?$/,
-        loader: 'raw-loader'
-      }
-    ]
+        loader: 'raw-loader',
+      },
+    ],
   },
   output: {
     path: path.join(__dirname, global.DIST_FOLDER),
     publicPath: isDebug ? `http://localhost:${global.PORT}/` : '/dist/',
     filename: isDebug ? '[name].js?[hash]' : '[name].[hash].js',
     chunkFilename: isDebug ? '[id].js?[chunkhash]' : '[id].[chunkhash].js',
-    sourcePrefix: '  '
-  }
+    sourcePrefix: '  ',
+  },
 };
 
 if (isDebug) {
@@ -240,33 +240,33 @@ if (isDebug) {
   babelConfig.plugins.unshift('react-hot-loader/babel');
   config.entry.main.unshift(
     'react-hot-loader/patch',
-    'webpack-hot-middleware/client'
+    'webpack-hot-middleware/client',
   );
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
 } else {
   // Optimize the bundle in production mode
   config.plugins.push(new ExtractTextPlugin({
     filename: '[name].[hash].css',
-    allChunks: true
+    allChunks: true,
   }));
   config.plugins.push(new webpack.optimize.UglifyJsPlugin({
     compress: {
-      warnings: isVerbose
-    }
+      warnings: isVerbose,
+    },
   }));
   config.plugins.push(new webpack.optimize.AggressiveMergingPlugin());
   config.plugins.push(
     new ImageminPlugin({
       optipng: {
-        optimizationLevel: 3
+        optimizationLevel: 3,
       },
       plugins: [
         imageminMozjpeg({
           quality: 95,
-          progressive: true
-        })
-      ]
-    })
+          progressive: true,
+        }),
+      ],
+    }),
   );
 }
 

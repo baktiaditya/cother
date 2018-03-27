@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Link } from 'react-router';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import { slugify } from '../../shared/utils';
 import scss from './NotFoundPage.mod.scss';
 import scssString from './NotFoundPage.string.scss';
 
-class ErrorPage extends Component {
+class ErrorPage extends PureComponent {
   static displayName = 'ErrorPage';
 
   _style;

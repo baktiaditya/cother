@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import isNumber from 'lodash/isNumber';
+import isString from 'lodash/isString';
+import isBoolean from 'lodash/isBoolean';
 import classNames from 'classnames/bind';
 import scss from './Grid.mod.scss';
 
@@ -12,8 +14,8 @@ class Column extends Component {
     noGutter: PropTypes.oneOfType([PropTypes.oneOf(['left', 'right']), PropTypes.bool]),
     size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     style: PropTypes.object,
-    width: PropTypes.number
-  }
+    width: PropTypes.number,
+  };
 
   render() {
     const {
@@ -26,14 +28,14 @@ class Column extends Component {
     delete props.style;
 
     let {
-      style
+      style,
     } = this.props;
 
     if (style && style.width) {
       style = {
-        flex: `0 0 ${_.isNumber(style.width) ? style.width : `${style.width}px`}`,
+        flex: `0 0 ${isNumber(style.width) ? style.width : `${style.width}px`}`,
         maxWidth: style.width,
-        ...style
+        ...style,
       };
       delete style.width;
     }
@@ -42,11 +44,11 @@ class Column extends Component {
     const classes = cx(
       className,
       size ? `col-${size}` : 'col',
-      _.isBoolean(noGutter) && noGutter === true ? 'col-no-gutter' : false,
+      isBoolean(noGutter) && noGutter === true ? 'col-no-gutter' : false,
       {
         [`col-halign-${halign}`]: halign,
-        [`col-no-gutter-${noGutter}`]: _.isString(noGutter)
-      }
+        [`col-no-gutter-${noGutter}`]: isString(noGutter),
+      },
     );
 
     return <div {...props} className={classes} style={style} />;

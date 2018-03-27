@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "description": "A real-time collaborative code editor and previewer.",
+  "homepage": "http://baktiaditya.github.io/cother",
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "classnames": "^2.2.5",
@@ -23,10 +24,9 @@
     "babel-core": "^6.23.1",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.0.0",
-    "babel-plugin-lodash": "^3.2.11",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.23.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.23.0",
@@ -69,25 +69,17 @@
     "start": "node run --debug",
     "start:prod": "node run",
     "build": "node run build",
-    "publish": "node run publish"
+    "deploy": "node run deploy"
   },
   "babel": {
     "presets": [
-      "es2015",
+      "env",
       "react",
       "stage-0"
     ],
     "plugins": [
       "transform-runtime",
-      "transform-decorators-legacy",
-      [
-        "lodash",
-        {
-          "id": [
-            "lodash"
-          ]
-        }
-      ]
+      "transform-decorators-legacy"
     ]
   }
 }

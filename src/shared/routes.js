@@ -11,7 +11,7 @@ export default [
       require.ensure([], (require) => {
         cb(null, require('../pages/NotFoundPage/NotFoundPage').default);
       });
-    }
+    },
   },
   {
     path: '/',
@@ -21,7 +21,7 @@ export default [
         require.ensure([], (require) => {
           cb(null, require('../pages/HomePage/HomePage').default);
         });
-      }
+      },
     },
     childRoutes: [
       {
@@ -30,12 +30,12 @@ export default [
           require.ensure([], (require) => {
             cb(null, require('../pages/TextEditorPage/TextEditorPage').default);
           });
-        }
-      }
-    ]
+        },
+      },
+    ],
   },
   {
     path: '*',
-    onEnter: ({ params }, replace) => replace('/not-found')
-  }
+    onEnter: ({ params }, replace) => replace('/not-found'),
+  },
 ];

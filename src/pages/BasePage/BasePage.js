@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { slugify } from '../../shared/utils';
 import scss from './BasePage.string.scss';
 
-class BasePage extends Component {
+class BasePage extends PureComponent {
   static displayName = 'BasePage';
 
   static propTypes = {
-    children: PropTypes.node
-  }
+    children: PropTypes.node,
+  };
 
   _style;
 

@@ -2,7 +2,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+
+import isFunction from 'lodash/isFunction';
+import isEmpty from 'lodash/isEmpty';
 import { firebaseDb } from '../../shared/firebase';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import { slugify } from '../../shared/utils';
@@ -207,14 +209,14 @@ class TextEditorPage extends Component {
   componentWillUnmount() {
     // Destroy Ace editor
     Object.keys(this._ace).forEach(key => {
-      if (this._ace[key].instance && _.isFunction(this._ace[key].instance.destroy)) {
+      if (this._ace[key].instance && isFunction(this._ace[key].instance.destroy)) {
         this._ace[key].instance.destroy();
       }
     });
 
     // Destroy firepad
     Object.keys(this._firepad).forEach(key => {
-      if (this._firepad[key] && _.isFunction(this._firepad[key].dispose)) {
+      if (this._firepad[key] && isFunction(this._firepad[key].dispose)) {
         this._firepad[key].dispose();
       }
     });
@@ -298,7 +300,7 @@ class TextEditorPage extends Component {
     const headerProps = {
       editor,
       onBtnEditorClick: this.onBtnEditorClick,
-      totalUsers: !_.isEmpty(userList) ? Object.keys(userList).length : 0,
+      totalUsers: !isEmpty(userList) ? Object.keys(userList).length : 0,
     };
     const headerPropsEditorArr = Object.keys(headerProps.editor).filter((e) => e !== 'output');
     headerProps.isLoading = JSON.stringify(editorReady) !== JSON.stringify(headerPropsEditorArr);

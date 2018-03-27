@@ -1,5 +1,5 @@
 /* eslint no-console:0 */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Link } from 'react-router';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import { generateRandomString, slugify } from '../../shared/utils';
@@ -7,7 +7,7 @@ import Footer from '../../components/Footer/Footer';
 import scss from './HomePage.mod.scss';
 import scssString from './HomePage.string.scss';
 
-class HomePage extends Component {
+export default class HomePage extends PureComponent {
   static displayName = 'HomePage';
 
   _style;
@@ -57,5 +57,3 @@ class HomePage extends Component {
     );
   }
 }
-
-export default HomePage;

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import snakeCase from 'lodash/snakeCase';
 
 export function generateRandomString(length) {
   let text = '';
@@ -25,7 +25,7 @@ export function hexPropTypes(props, propName, componentName) {
 }
 
 export function slugify(string) {
-  return _.snakeCase(string).replace(/_/g, '-');
+  return snakeCase(string).replace(/_/g, '-');
 }
 
 export const isBrowser = !!((typeof window !== 'undefined' && window.document && window.document.createElement));
