@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { hexPropTypes } from '../../shared/utils';
@@ -12,25 +12,24 @@ import navigationIcons from './svg/navigation';
 import socialIcons from './svg/social';
 import placesIcons from './svg/places';
 import mapIcons from './svg/maps';
-import * as scss from './Icon.mod.scss';
+import scss from './Icon.mod.scss';
 
 /**
  * React supports several SVG elements which means you can embed your icon code directly into a
  * component. Inline SVG has good browser support and by using it you can save HTTP requests, icons
  * are still cache-able and you can control them using CSS.
  */
-class Icon extends Component {
+class Icon extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
     color: hexPropTypes,
-    componentRef: PropTypes.func,
     icon: PropTypes.string,
     size: PropTypes.number,
-    style: PropTypes.object
+    style: PropTypes.object,
   };
 
   static defaultProps = {
-    icon: 'favorite'
+    icon: 'favorite',
   };
 
   static icons = {
@@ -42,7 +41,7 @@ class Icon extends Component {
     ...fileIcons,
     ...socialIcons,
     ...placesIcons,
-    ...mapIcons
+    ...mapIcons,
   };
 
   /**
@@ -77,7 +76,7 @@ class Icon extends Component {
     const cx = classNames.bind(scss);
     const classes = cx(
       className,
-      'icon'
+      'icon',
     );
     const currIcon = Icon.isExist(icon);
 

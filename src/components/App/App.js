@@ -5,8 +5,9 @@ import routes from '../../shared/routes';
 
 const App = () => {
   const routerProps = {
+    key: Math.random(),
     history: browserHistory,
-    routes
+    routes,
   };
 
   if (process.env.NODE_ENV === 'production') {

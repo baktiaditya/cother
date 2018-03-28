@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames/bind';
-import isEmpty from 'lodash/isEmpty';
+import _ from 'lodash';
 import Icon from '../Icon/Icon';
 import Loader from '../Loader/Loader';
-import * as scss from './Button.mod.scss';
+import scss from './Button.mod.scss';
 
 const ICON_PROPS_DEFAULT = {
   icon: undefined,
@@ -22,7 +22,6 @@ class Button extends Component {
     children: PropTypes.node,
     className: PropTypes.string,
     color: PropTypes.oneOf(['white']),
-    componentRef: PropTypes.func,
     disabled: PropTypes.bool,
     iconProps: PropTypes.shape({
       icon: PropTypes.string,
@@ -71,11 +70,11 @@ class Button extends Component {
 
     if (!this.props.isLoading && nextProps.isLoading) {
       const style = window.getComputedStyle(btn, null);
-      btn.style.width = !isEmpty(this._inlineWidth) ? this._inlineWidth : style.width;
-      btn.style.height = !isEmpty(this._inlineHeight) ? this._inlineHeight : style.height;
+      btn.style.width = !_.isEmpty(this._inlineWidth) ? this._inlineWidth : style.width;
+      btn.style.height = !_.isEmpty(this._inlineHeight) ? this._inlineHeight : style.height;
     } else if (this.props.isLoading && !nextProps.isLoading) {
-      btn.style.width = !isEmpty(this._inlineWidth) ? this._inlineWidth : '';
-      btn.style.height = !isEmpty(this._inlineHeight) ? this._inlineHeight : '';
+      btn.style.width = !_.isEmpty(this._inlineWidth) ? this._inlineWidth : '';
+      btn.style.height = !_.isEmpty(this._inlineHeight) ? this._inlineHeight : '';
     }
   }
 

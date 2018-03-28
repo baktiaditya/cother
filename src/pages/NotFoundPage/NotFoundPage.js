@@ -1,11 +1,11 @@
-import React, { PureComponent } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { Link } from 'react-router';
 import { PAGE_TITLE_PREFIX, PAGE_TITLE_SEP } from '../../shared/constants';
 import { slugify } from '../../shared/utils';
 import scss from './NotFoundPage.mod.scss';
 import scssString from './NotFoundPage.string.scss';
 
-class ErrorPage extends PureComponent {
+export default class ErrorPage extends PureComponent {
   static displayName = 'ErrorPage';
 
   _style;
@@ -15,8 +15,16 @@ class ErrorPage extends PureComponent {
     // Page title
     const titleTag = document.getElementsByTagName('title')[0];
     titleTag.innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} ${this._pageTitle}`;
+  }
 
+  componentDidMount() {
     // Create custom <style /> in <head />
+    const id = slugify(ErrorPage.displayName);
+    const elem = document.getElementById(id);
+    if (elem) {
+      elem.parentNode.removeChild(elem);
+    }
+
     const css = scssString;
     const head = document.head || document.getElementsByTagName('head')[0];
     this._style = document.createElement('style');
@@ -40,13 +48,11 @@ class ErrorPage extends PureComponent {
 
   render() {
     return (
-      <div>
+      <Fragment>
         <h1 className={scss['headline']}>{this._pageTitle}</h1>
         <p className={scss['caption']}>Sorry, but the page you were trying to view does not
           exist. Head over to the <Link to='/'>home page</Link> to choose a new direction.</p>
-      </div>
+      </Fragment>
     );
   }
 }
-
-export default ErrorPage;

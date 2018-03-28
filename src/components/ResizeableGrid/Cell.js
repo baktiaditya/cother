@@ -13,8 +13,8 @@ class Cell extends Component {
     onDimensionChange: PropTypes.func,
     type: PropTypes.oneOf(['row', 'column']),
     height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-  }
+    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  };
 
   _ref;
   _resizeSensor;
@@ -57,7 +57,7 @@ class Cell extends Component {
     const classes = cx(
       className,
       'cell',
-      `cell-type-${type}`
+      `cell-type-${type}`,
     );
 
     return (

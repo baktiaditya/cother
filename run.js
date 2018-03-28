@@ -6,6 +6,11 @@ const webpack = require('webpack');
 const minify = require('html-minifier').minify;
 const firebaseConfig = require('./firebase.config');
 const spawn = require('child_process').spawn;
+const browserSync = require('browser-sync');
+const browserSyncReuseTab = require('browser-sync-reuse-tab');
+
+const bs = browserSync.create();
+const bsReuseTab = browserSyncReuseTab(bs);
 
 // Configuration settings
 let config = {
@@ -63,8 +68,15 @@ tasks.set('html', () => {
     removeComments: true,
     collapseWhitespace: true,
   }), 'utf8');
+});
 
-  // copy favicon
+//
+// Copy ./favicon.png into the /public folder
+// -----------------------------------------------------------------------------
+tasks.set('favicon', () => {
+  if (!fs.existsSync(global.BUILD_FOLDER)) {
+    fs.mkdirSync(global.BUILD_FOLDER);
+  }
   fs.createReadStream(`${global.PUBLIC_FOLDER}/favicon.png`)
     .pipe(fs.createWriteStream(`${global.BUILD_FOLDER}/favicon.png`));
 });
@@ -118,6 +130,7 @@ tasks.set('build', () => {
   return Promise.resolve()
     .then(() => run('clean'))
     .then(() => run('bundle'))
+    .then(() => run('favicon'))
     .then(() => run('html'));
 });
 
@@ -126,9 +139,8 @@ tasks.set('build', () => {
 // -----------------------------------------------------------------------------
 tasks.set('start', () => {
   let count = 0;
-  return run('clean')
+  return run('clean').then(() => run('favicon'))
     .then(() => new Promise((resolve) => {
-      const bs = require('browser-sync').create();
       const webpackConfig = require('./webpack.config');
       const compiler = webpack(webpackConfig);
       // Node.js middleware that compiles application in watch mode with HMR support
@@ -185,7 +197,10 @@ tasks.set('start', () => {
               middleware,
             },
             open: false,
-          }, resolve);
+          }, () => {
+            bsReuseTab();
+            resolve();
+          });
         }
       });
     }));

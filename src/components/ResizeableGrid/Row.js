@@ -15,8 +15,7 @@ const Row = (props) => {
 };
 
 Row.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 export { Row };
-

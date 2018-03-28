@@ -1,20 +1,20 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import * as scss from './Loader.mod.scss';
+import scss from './Loader.mod.scss';
 
-class Loader extends Component {
+class Loader extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
     color: PropTypes.oneOf(['white', 'gray-lighter', 'yellow']),
     size: PropTypes.oneOf(['default', 'sm', 'md', 'lg']),
-    type: PropTypes.oneOf(['dotted', 'circular'])
+    type: PropTypes.oneOf(['dotted', 'circular']),
   };
 
   static defaultProps = {
     color: 'gray-lighter',
     size: 'default',
-    type: 'circular'
+    type: 'circular',
   };
 
   render() {
@@ -32,7 +32,7 @@ class Loader extends Component {
       className,
       type,
       color ? `${type}-color-${color}` : false,
-      size ? `${type}-size-${size}` : false
+      size ? `${type}-size-${size}` : false,
     );
 
     if (type === 'circular') {

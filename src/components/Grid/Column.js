@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
@@ -6,10 +6,9 @@ import isBoolean from 'lodash/isBoolean';
 import classNames from 'classnames/bind';
 import scss from './Grid.mod.scss';
 
-class Column extends Component {
+class Column extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
-    componentRef: PropTypes.func,
     halign: PropTypes.oneOf(['left', 'right', 'center', 'around', 'between']),
     noGutter: PropTypes.oneOfType([PropTypes.oneOf(['left', 'right']), PropTypes.bool]),
     size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

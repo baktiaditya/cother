@@ -11,16 +11,16 @@ class Splitter extends Component {
     onDragStart: PropTypes.func,
     onDragMove: PropTypes.func,
     onDragStop: PropTypes.func,
-    type: PropTypes.oneOf(['row', 'column'])
-  }
+    type: PropTypes.oneOf(['row', 'column']),
+  };
 
   _elemRef;
 
   state = {
     dragging: false,
     resizeableElement: null,
-    otherElement: null
-  }
+    otherElement: null,
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.dragging && !prevState.dragging) {
@@ -64,13 +64,13 @@ class Splitter extends Component {
     this.setState({
       dragging: true,
       resizeableElement,
-      otherElement
+      otherElement,
     });
-  }
+  };
 
   onMouseUp = (e) => {
     this.setState({
-      dragging: false
+      dragging: false,
     }, () => {
       this.props.onDragStop && this.props.onDragStop(e);
 
@@ -82,7 +82,7 @@ class Splitter extends Component {
         this.state.resizeableElement.removeAttribute('data-cell-max-height');
       }
     });
-  }
+  };
 
   onMouseMove = (e) => {
     this.props.onDragMove && this.props.onDragMove(e);
@@ -115,7 +115,7 @@ class Splitter extends Component {
         otherElement.style.maxHeight = `${newOtherElemHeight}px`;
       }
     }
-  }
+  };
 
   render() {
     const {
@@ -133,8 +133,8 @@ class Splitter extends Component {
       'splitter',
       `${type === 'row' ? 'splitter-vertical' : 'splitter-horizontal'}`,
       {
-        'splitter-dragging': this.state.dragging
-      }
+        'splitter-dragging': this.state.dragging,
+      },
     );
 
     const elemProps = {
@@ -143,7 +143,7 @@ class Splitter extends Component {
       className: classes,
       onMouseDown: this.onMouseDown,
       onMouseUp: this.onMouseUp,
-      type
+      type,
     };
 
     if (type === 'row') {

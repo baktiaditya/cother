@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import classNames from 'classnames/bind';
@@ -8,22 +8,23 @@ import ButtonGroup from '../ButtonGroup/ButtonGroup';
 import Button from '../Button/Button';
 import { GITHUB_BTN_URL } from '../../shared/constants';
 import scss from './HeaderEditor.mod.scss';
+import logoImg from '../../shared/assets/logo.svg';
 
 const cx = classNames.bind(scss);
 
-class HeaderEditor extends Component {
+class HeaderEditor extends PureComponent {
   static propTypes = {
     brand: PropTypes.string,
     editor: PropTypes.object.isRequired,
     isLoading: PropTypes.bool,
     onBtnEditorClick: PropTypes.func,
-    totalUsers: PropTypes.number
-  }
+    totalUsers: PropTypes.number,
+  };
 
   static defaultProps = {
     brand: 'Cother',
-    totalUsers: 0
-  }
+    totalUsers: 0,
+  };
 
   constructor(props) {
     super(props);
@@ -32,11 +33,11 @@ class HeaderEditor extends Component {
       html: 'HTML',
       css: 'CSS',
       javascript: 'JS',
-      output: 'Output'
+      output: 'Output',
     };
 
     this.state = {
-      btnEditor: {}
+      btnEditor: {},
     };
 
     Object.keys(props.editor).forEach(editor => {
@@ -48,21 +49,19 @@ class HeaderEditor extends Component {
     this.setState({
       btnEditor: {
         ...this.state.btnEditor,
-        [editor]: !this.state.btnEditor[editor]
-      }
+        [editor]: !this.state.btnEditor[editor],
+      },
     }, () => {
       this.props.onBtnEditorClick && this.props.onBtnEditorClick(editor, e);
     });
-  }
+  };
 
   render() {
     const {
       brand,
       editor,
-      isLoading
+      isLoading,
     } = this.props;
-
-    const logoImg = require('../../shared/assets/logo.svg');
 
     return (
       <div className={scss['header']}>

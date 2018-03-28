@@ -9,7 +9,7 @@ const Footer = ({ type }) => {
   const cx = classNames.bind(scss);
   const classes = cx(
     'footer',
-    type === 'fixed' ? 'footer-fixed' : undefined
+    type === 'fixed' ? 'footer-fixed' : undefined,
   );
 
   return (
@@ -32,11 +32,11 @@ const Footer = ({ type }) => {
 };
 
 Footer.propTypes = {
-  type: PropTypes.oneOf(['normal', 'fixed'])
+  type: PropTypes.oneOf(['normal', 'fixed']),
 };
 
 Footer.defaultProps = {
-  type: 'normal'
+  type: 'normal',
 };
 
 export default Footer;

@@ -12,21 +12,30 @@ export default class HomePage extends PureComponent {
 
   _style;
 
-  componentWillMount() {
+  componentDidMount() {
     // Page title
     const titleTag = document.getElementsByTagName('title')[0];
     titleTag.innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} Collaborative Code Editor`;
 
     // Create custom <style /> in <head />
+    const id = slugify(HomePage.displayName);
+    const elem = document.getElementById(id);
+    if (elem) {
+      elem.parentNode.removeChild(elem);
+    }
+
+    const css = scssString;
     const head = document.head || document.getElementsByTagName('head')[0];
     this._style = document.createElement('style');
     this._style.id = slugify(HomePage.displayName);
+
     this._style.type = 'text/css';
     if (this._style.styleSheet) {
-      this._style.styleSheet.cssText = scssString;
+      this._style.styleSheet.cssText = css;
     } else {
-      this._style.appendChild(document.createTextNode(scssString));
+      this._style.appendChild(document.createTextNode(css));
     }
+
     head.appendChild(this._style);
   }
 

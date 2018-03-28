@@ -15,7 +15,7 @@ const Column = (props) => {
 };
 
 Column.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 export { Column };

@@ -17,7 +17,7 @@ import configureStore from './store/configureStore';
 import App from './components/App/App';
 
 const store = configureStore();
-const container = document.getElementById('__container');
+const container = document.getElementById('__root');
 
 render(
   <AppContainer>
@@ -25,7 +25,7 @@ render(
       <App />
     </Provider>
   </AppContainer>,
-  container
+  container,
 );
 
 // Hot reload
@@ -40,8 +40,7 @@ if (module.hot) {
           <NextApp />
         </Provider>
       </AppContainer>,
-      container
+      container,
     );
   });
 }
-

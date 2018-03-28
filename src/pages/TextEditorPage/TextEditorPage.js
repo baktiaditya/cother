@@ -18,7 +18,7 @@ import Iframe from '../../components/Iframe/Iframe';
 import scss from './TextEditorPage.mod.scss';
 import scssString from './TextEditorPage.string.scss';
 
-class TextEditorPage extends Component {
+export default class TextEditorPage extends Component {
   static displayName = 'TextEditorPage';
 
   static propTypes = {
@@ -81,7 +81,7 @@ class TextEditorPage extends Component {
     });
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // Database
     Object.keys(this._ace).forEach(editor => {
       this._firepadDbRef[editor] = firebaseDb.ref(`${this._dbPrefix}/${editor}`);
@@ -100,20 +100,25 @@ class TextEditorPage extends Component {
     titleTag.innerHTML = `${PAGE_TITLE_PREFIX} ${PAGE_TITLE_SEP} ${this._id}`;
 
     // Create custom <style /> in <head />
+    const id = slugify(TextEditorPage.displayName);
+    const elem = document.getElementById(id);
+    if (elem) {
+      elem.parentNode.removeChild(elem);
+    }
+
+    const css = scssString;
     const head = document.head || document.getElementsByTagName('head')[0];
     this._style = document.createElement('style');
     this._style.id = slugify(TextEditorPage.displayName);
+
     this._style.type = 'text/css';
     if (this._style.styleSheet) {
-      this._style.styleSheet.cssText = scssString;
+      this._style.styleSheet.cssText = css;
     } else {
-      this._style.appendChild(document.createTextNode(scssString));
+      this._style.appendChild(document.createTextNode(css));
     }
-
     head.appendChild(this._style);
-  }
 
-  componentDidMount() {
     Object.keys(this._ace).forEach((mode) => {
       const editor = window.ace.edit(ReactDOM.findDOMNode(this._ace[mode].ref));
       editor.session.setMode(`ace/mode/${mode}`);
@@ -349,5 +354,3 @@ class TextEditorPage extends Component {
     );
   }
 }
-
-export default TextEditorPage;

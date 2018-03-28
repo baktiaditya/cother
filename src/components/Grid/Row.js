@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import scss from './Grid.mod.scss';
 
-class Row extends Component {
+class Row extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
     halign: PropTypes.oneOf(['left', 'right', 'center', 'around', 'between']),
     noGutter: PropTypes.bool,
-    valign: PropTypes.oneOf(['baseline', 'top', 'middle', 'bottom'])
-  }
+    valign: PropTypes.oneOf(['baseline', 'top', 'middle', 'bottom']),
+  };
 
   render() {
     const {
@@ -27,8 +27,8 @@ class Row extends Component {
       {
         'row-no-gutter': noGutter,
         [`row-valign-${valign}`]: valign,
-        [`row-halign-${halign}`]: halign
-      }
+        [`row-halign-${halign}`]: halign,
+      },
     );
 
     return (
