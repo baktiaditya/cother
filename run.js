@@ -5,7 +5,7 @@ const ejs = require('ejs');
 const webpack = require('webpack');
 const minify = require('html-minifier').minify;
 const firebaseConfig = require('./firebase.config');
-const spawn = require('child_process').spawn;
+const spawn = require('cross-spawn');
 const browserSync = require('browser-sync');
 const browserSyncReuseTab = require('browser-sync-reuse-tab');
 
