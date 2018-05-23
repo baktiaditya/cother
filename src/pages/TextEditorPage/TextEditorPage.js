@@ -48,7 +48,11 @@ export default class TextEditorPage extends Component {
       },
       javascript: {
         show: false,
-        defaultContent: '// JS\n\nconsole.log(jQuery.fn.jquery);',
+        defaultContent: ['$(function() {',
+          '  // Code here',
+          '  console.log($.fn.jquery);',
+          '});',
+        ].join('\n'),
       },
     };
 
