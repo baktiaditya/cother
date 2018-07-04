@@ -8,7 +8,7 @@
   @include border-radius($border-radius);
 }
 
-@mixin button-outline-variant($color, $background, $background-active, $border) {
+@mixin button-outline-variant($color, $color-active, $background, $background-active, $border) {
   color: $color;
   background-image: none;
   background-color: $background;
@@ -16,7 +16,7 @@
 
   @include hover {
     color: $color;
-    background-color: rgba($background-active, .25);
+    background-color: rgba($background, .85);
     border-color: $border;
   }
 
@@ -30,14 +30,14 @@
   &:active,
   &.active,
   .open > &.dropdown-toggle {
-    color: invert($color);
+    color: $color-active;
     border-color: darken($border, 5%);
     background-color: $background-active;
 
     &:hover,
     &:focus,
     &.focus {
-      color: invert($color);
+      color: $color-active;
       border-color: darken($border, 10%);
       background-color: $background-active;
     }

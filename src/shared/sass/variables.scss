@@ -79,10 +79,11 @@ $btn-font-weight:             400 !default;
 $btn-font-size:               $font-size-base !default;
 $btn-border-width:            1px !default;
 
-$btn-white-outline-color:     $white !default;
-$btn-white-outline-bg:        transparent !default;
-$btn-white-outline-bg-active: $white !default;
-$btn-white-outline-border:    $btn-white-outline-color !default;
+$btn-white-outline-color:         $body-color !default;
+$btn-white-outline-color-active:  $white !default;
+$btn-white-outline-bg:            $white !default;
+$btn-white-outline-bg-active:     transparent !default;
+$btn-white-outline-border:        $white !default;
 
 $btn-padding-x:               $input-padding-x !default;
 $btn-padding-y:               $input-padding-y !default;

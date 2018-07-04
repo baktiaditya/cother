@@ -87,6 +87,7 @@ fieldset[disabled] a.btn {
 .btn-outline-white {
   @include button-outline-variant(
     $btn-white-outline-color,
+    $btn-white-outline-color-active,
     $btn-white-outline-bg,
     $btn-white-outline-bg-active,
     $btn-white-outline-border

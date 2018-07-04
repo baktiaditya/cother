@@ -4,6 +4,23 @@
   "private": true,
   "description": "A real-time collaborative code editor and previewer.",
   "homepage": "http://baktiaditya.github.io/cother",
+  "scripts": {
+    "start": "node run --debug",
+    "start:prod": "node run",
+    "build": "node run build",
+    "deploy": "node run deploy"
+  },
+  "babel": {
+    "presets": [
+      "env",
+      "react",
+      "stage-0"
+    ],
+    "plugins": [
+      "transform-runtime",
+      "transform-decorators-legacy"
+    ]
+  },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "classnames": "^2.2.5",
@@ -66,22 +83,5 @@
     "webpack": "^2.5.1",
     "webpack-dev-middleware": "^1.10.2",
     "webpack-hot-middleware": "^2.18.0"
-  },
-  "scripts": {
-    "start": "node run --debug",
-    "start:prod": "node run",
-    "build": "node run build",
-    "deploy": "node run deploy"
-  },
-  "babel": {
-    "presets": [
-      "env",
-      "react",
-      "stage-0"
-    ],
-    "plugins": [
-      "transform-runtime",
-      "transform-decorators-legacy"
-    ]
   }
 }
