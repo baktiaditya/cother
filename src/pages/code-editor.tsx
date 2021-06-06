@@ -347,6 +347,16 @@ class CodeEditor extends React.Component<CodeEditorProps, State> {
     const isHide = !this.props.activePane.includes(pane);
     const style = { display: isHide ? 'none' : undefined };
 
+    const visiblePane: Array<Pane> = [];
+    // create sequence based on this.state.editor
+    keys(this.state.editor).forEach(key => {
+      if (this.props.activePane.includes(key)) {
+        visiblePane.push(key);
+      }
+    });
+    const lastActivePane = visiblePane.slice(-1)[0];
+    const showSplitter = !(lastActivePane === pane && !this.props.activePane.includes('output'));
+
     return (
       <Fragment key={pane}>
         <Cell
@@ -355,19 +365,17 @@ class CodeEditor extends React.Component<CodeEditorProps, State> {
           }}
           style={style}
         >
-          <div
-            id={pane}
-            ref={c => (ace.ref = c)}
-            className="ewe"
-            css={this.styles.editorContainer}
-          />
+          <div id={pane} ref={c => (ace.ref = c)} css={this.styles.editorContainer} />
         </Cell>
-        <Splitter
-          onDragStart={this.handleSplitterDragStart}
-          onDragMove={this.resizeAllEditor}
-          onDragStop={this.handleSplitterDragStop}
-          style={style}
-        />
+        {showSplitter && (
+          <Splitter
+            className={!isHide ? 'show' : undefined}
+            onDragStart={this.handleSplitterDragStart}
+            onDragMove={this.resizeAllEditor}
+            onDragStop={this.handleSplitterDragStop}
+            style={style}
+          />
+        )}
       </Fragment>
     );
   }
