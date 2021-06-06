@@ -1,4 +1,0 @@
-based on https://www.npmjs.com/package/react-resizable-grid
-
-Iframe obstructing the mousemove event from occuring
-https://stackoverflow.com/questions/18418467/iframe-obstructing-the-mousemove-event-from-occuring

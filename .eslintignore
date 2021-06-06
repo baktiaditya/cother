@@ -1,2 +1,4 @@
-node_modules/**
-dist/**
+@types
+node_modules
+__snapshots__
+storybook-static
