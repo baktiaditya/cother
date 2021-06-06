@@ -3,6 +3,7 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import ReactGA from 'react-ga';
 import { PROJECT_NAME, GA_TRACKING_ID } from 'src/contants';
 import { wrapper } from 'src/store';
 import theme from 'src/styles/theme';
@@ -12,11 +13,8 @@ import '@fortawesome/fontawesome-svg-core/styles.css'; // for icon component
 const MyApp: React.VFC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter();
 
+  // favicon
   React.useEffect(() => {
-    // google analytic
-    router.events.on('routeChangeComplete', handleRouteChange);
-
-    // favicon
     const head = document.getElementsByTagName('head')[0];
     const lightSchemeIcon = document.querySelector('link#light-scheme-icon');
     const darkSchemeIcon = document.querySelector('link#dark-scheme-icon');
@@ -47,15 +45,24 @@ const MyApp: React.VFC<AppProps> = ({ Component, pageProps }) => {
     matcher.addEventListener('change', onUpdate);
 
     return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
       matcher.removeEventListener('change', onUpdate);
     };
   }, []);
 
-  const handleRouteChange = (url: URL) => {
-    (window as any).gtag('config', `'${GA_TRACKING_ID}'`, {
-      page_path: url,
-    });
+  // google analytic
+  React.useEffect(() => {
+    const url = window.location.pathname + window.location.search;
+    ReactGA.initialize(GA_TRACKING_ID);
+    ReactGA.pageview(url);
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, []);
+
+  const handleRouteChange = (url: string) => {
+    ReactGA.pageview(url);
   };
 
   return (

@@ -1,6 +1,5 @@
 import React from 'react';
 import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/document';
-import { GA_TRACKING_ID } from 'src/contants';
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -37,20 +36,6 @@ class MyDocument extends Document {
           {/* firepad */}
           <link href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" rel="stylesheet" />
           <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js" />
-
-          {/* Google Analytic */}
-          {/* https://stackoverflow.com/a/62552263 */}
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
-            `,
-            }}
-          />
         </Head>
         <body>
           <Main />
