@@ -3,7 +3,7 @@
     "rules": "firebase.db.rules.json"
   },
   "hosting": {
-    "public": "build",
+    "public": "firebase-hosting",
     "ignore": [
       "firebase.json",
       "index.tmpl.ejs",

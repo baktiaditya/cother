@@ -8,7 +8,8 @@
     "dev": "next dev",
     "build": "next build && next export",
     "serve": "next start",
-    "serve-static": "serve -c serve.json"
+    "serve-static": "serve -c serve.json",
+    "deploy-firebase": "node run deploy"
   },
   "dependencies": {
     "@emotion/react": "^11.4.0",
@@ -41,6 +42,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
+    "firebase-tools": "^9.12.1",
     "netlify-plugin-cache-nextjs": "^1.6.1",
     "next-compose-plugins": "^2.2.1",
     "next-images": "^1.7.0",
