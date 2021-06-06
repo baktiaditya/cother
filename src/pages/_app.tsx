@@ -2,14 +2,20 @@ import React from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { PROJECT_NAME } from 'src/contants';
+import { useRouter } from 'next/router';
+import { PROJECT_NAME, GA_TRACKING_ID } from 'src/contants';
 import { wrapper } from 'src/store';
 import theme from 'src/styles/theme';
 import globalStyles from 'src/styles/global';
 import '@fortawesome/fontawesome-svg-core/styles.css'; // for icon component
 
 const MyApp: React.VFC<AppProps> = ({ Component, pageProps }) => {
+  const router = useRouter();
+
   React.useEffect(() => {
+    // google analytic
+    router.events.on('routeChangeComplete', handleRouteChange);
+
     // favicon
     const head = document.getElementsByTagName('head')[0];
     const lightSchemeIcon = document.querySelector('link#light-scheme-icon');
@@ -41,9 +47,16 @@ const MyApp: React.VFC<AppProps> = ({ Component, pageProps }) => {
     matcher.addEventListener('change', onUpdate);
 
     return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
       matcher.removeEventListener('change', onUpdate);
     };
   }, []);
+
+  const handleRouteChange = (url: URL) => {
+    (window as any).gtag('config', `'${GA_TRACKING_ID}'`, {
+      page_path: url,
+    });
+  };
 
   return (
     <ThemeProvider theme={theme}>

@@ -7,6 +7,7 @@ export const GITHUB_BTN_URL = `https://ghbtns.com/github-btn.html?${qs.stringify
   type: 'fork',
   count: 'false',
 })}`;
+export const GA_TRACKING_ID = 'UA-26982489-22';
 
 // Firebase configuration settings
 export const FIREBASE_PROJECT_ID = 'cother-8e4f9';

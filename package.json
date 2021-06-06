@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "A real-time collaborative code editor and previewer.",
-  "homepage": "http://baktiaditya.github.io/cother",
+  "homepage": "https://github.com/baktiaditya/cother",
   "scripts": {
     "dev": "next dev",
     "build": "next build && next export",
