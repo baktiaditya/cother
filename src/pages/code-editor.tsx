@@ -37,12 +37,13 @@ type CodeEditorProps = ReturnType<typeof mapStateToProps> & {
   theme: ThemeLib;
 };
 
-type PaneEditor = Exclude<Pane, 'output'>;
+type PaneEditor = Exclude<Pane, 'result'>;
 
 type State = {
   err: boolean;
   editor: {
     [key in PaneEditor]: {
+      label: string;
       ready: boolean;
       content: string;
     };
@@ -130,14 +131,17 @@ class CodeEditor extends React.Component<CodeEditorProps, State> {
       currentUser: {},
       editor: {
         html: {
+          label: 'HTML',
           ready: false,
           content: '',
         },
         css: {
+          label: 'CSS',
           ready: false,
           content: '',
         },
         javascript: {
+          label: 'JS',
           ready: false,
           content: '',
         },
@@ -150,7 +154,7 @@ class CodeEditor extends React.Component<CodeEditorProps, State> {
   }
 
   componentDidMount() {
-    const id = this.getQueryStringValue('id');
+    const id = this.getQueryStringValue('session');
     if (isNumeric(id) && id.length === 13) {
       this.dbPrefix = `documents-no-owner/${id}`;
       this.userId = Math.floor(Math.random() * 9999999999).toString();
@@ -355,7 +359,7 @@ class CodeEditor extends React.Component<CodeEditorProps, State> {
       }
     });
     const lastActivePane = visiblePane.slice(-1)[0];
-    const showSplitter = !(lastActivePane === pane && !this.props.activePane.includes('output'));
+    const showSplitter = !(lastActivePane === pane && !this.props.activePane.includes('result'));
 
     return (
       <Fragment key={pane}>
@@ -365,6 +369,7 @@ class CodeEditor extends React.Component<CodeEditorProps, State> {
           }}
           style={style}
         >
+          <div css={this.styles.editorLabel}>{this.state.editor[pane].label}</div>
           <div id={pane} ref={c => (ace.ref = c)} css={this.styles.editorContainer} />
         </Cell>
         {showSplitter && (
@@ -402,7 +407,7 @@ class CodeEditor extends React.Component<CodeEditorProps, State> {
             {keys(editor).map(pane => this.renderEditor(pane))}
 
             {/* Output */}
-            <Cell style={{ display: !activePane.includes('output') ? 'none' : undefined }}>
+            <Cell style={{ display: !activePane.includes('result') ? 'none' : undefined }}>
               {/* Use mask to prevent Splitter drag error */}
               {this.state.showIframeMask && <div css={this.styles.iframeMask} />}
               <Iframe
@@ -411,6 +416,7 @@ class CodeEditor extends React.Component<CodeEditorProps, State> {
                   html: editor.html.content,
                   javascript: editor.javascript.content,
                 }}
+                id="result"
                 frameBorder={0}
                 scrolling="yes"
                 allowFullScreen

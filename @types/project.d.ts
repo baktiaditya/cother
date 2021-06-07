@@ -10,7 +10,7 @@ declare module '*.woff2';
 declare module '*.txt';
 
 declare module 'cother' {
-  export type Pane = 'html' | 'css' | 'javascript' | 'output';
+  export type Pane = 'html' | 'css' | 'javascript' | 'result';
 
   export type ReduxState = {
     app: {

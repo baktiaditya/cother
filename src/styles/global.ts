@@ -1,6 +1,6 @@
 // Based on https://github.com/twbs/bootstrap/blob/v5.0.0-alpha1/scss/_reboot.scss
 import { css } from '@emotion/react';
-import { normalize, rgba, lighten } from 'polished';
+import { normalize, rgba } from 'polished';
 import { ThemeLib } from './theme';
 
 const globalStyles = (t: ThemeLib) => {

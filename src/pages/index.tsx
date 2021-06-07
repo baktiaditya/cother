@@ -17,7 +17,7 @@ const Home: React.VFC = () => {
   const [codeEditorUrl, setCodeEditorUrl] = React.useState('');
 
   React.useEffect(() => {
-    setCodeEditorUrl(`/code-editor?id=${new Date().getTime()}`);
+    setCodeEditorUrl(`/code-editor?session=${new Date().getTime()}`);
   }, []);
 
   const handleCreateNew = (e: React.MouseEvent<HTMLAnchorElement>) => {

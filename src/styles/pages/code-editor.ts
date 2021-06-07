@@ -17,6 +17,18 @@ const createStyles = (t: ThemeLib) => {
         display: none;
       }
     `,
+    editorLabel: css`
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: ${t.color.lightPrimary};
+      font-size: ${t.typography.size.tiny}px;
+      line-height: ${t.typography.size.tiny}px;
+      padding: ${t.spacing.xxs}px ${t.spacing.xs}px;
+      background-color: ${t.color.darkPrimary};
+      border-bottom-left-radius: ${t.border.radius.default}px;
+      z-index: 10;
+    `,
     editorContainer: css`
       width: 100%;
       height: 100%;

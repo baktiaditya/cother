@@ -122,16 +122,53 @@ const grid = {
   },
 } as const;
 
+// Elevation
+const elevation = {
+  container: {
+    shadowColor: color.darkPrimary,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: opacity.seeThrough,
+    shadowRadius: 2,
+  },
+  raised: {
+    shadowColor: color.darkPrimary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: opacity.clear,
+    shadowRadius: 5,
+  },
+  float: {
+    shadowColor: color.darkPrimary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: opacity.clear,
+    shadowRadius: 10,
+  },
+  hover: {
+    shadowColor: color.darkPrimary,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: opacity.seeThrough,
+    shadowRadius: 16,
+  },
+} as const;
+
+// Z-index
+const zIndex = {
+  header: 1010,
+  tooltip: 1040,
+  popover: 1040,
+} as const;
+
 const theme = {
   animation,
   border,
   breakpoints,
   color,
   grid,
+  elevation,
   mq,
   opacity,
   spacing,
   typography,
+  zIndex,
 };
 
 export type ThemeLib = typeof theme;

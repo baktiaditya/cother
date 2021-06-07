@@ -11,7 +11,7 @@ import { ActionTypes } from 'src/actions/action_app.types';
 type State = ReduxState['app'];
 
 export const INITIAL_STATE: State = {
-  activePane: ['html', 'css', 'output'],
+  activePane: ['html', 'css', 'result'],
   loading: true,
   totalUser: 0,
 };

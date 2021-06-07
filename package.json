@@ -9,7 +9,8 @@
     "build": "next build && next export",
     "serve": "next start",
     "serve-static": "serve -c serve.json",
-    "deploy-firebase": "node run deploy"
+    "deploy-firebase": "node run deploy",
+    "lint": "tsc --noEmit && eslint --ext .ts --ext .tsx src/"
   },
   "dependencies": {
     "@emotion/react": "^11.4.0",
@@ -18,6 +19,8 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.3",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
+    "@popperjs/core": "^2.9.2",
+    "copy-to-clipboard": "^3.3.1",
     "css-element-queries": "^1.2.3",
     "facepaint": "^1.2.1",
     "lodash": "^4.17.21",
@@ -28,7 +31,9 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-ga": "^3.3.0",
+    "react-popper": "^2.2.5",
     "react-redux": "^7.2.4",
+    "react-transition-group": "^4.4.2",
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
@@ -36,6 +41,8 @@
     "@types/lodash": "^4.14.170",
     "@types/qs": "^6.9.6",
     "@types/react": "17.0.6",
+    "@types/react-dom": "^17.0.6",
+    "@types/react-transition-group": "^4.4.1",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
     "eslint": "^7.27.0",
