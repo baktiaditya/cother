@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "A real-time collaborative code editor and previewer.",
-  "homepage": "https://github.com/baktiaditya/cother",
+  "homepage": "https://cother.netlify.app",
   "scripts": {
     "dev": "next dev",
     "build": "next build && next export",
