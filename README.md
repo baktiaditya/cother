@@ -36,3 +36,4 @@ yarn build
 ```
 
 It will generate an `out` directory, which can be served by any static hosting service or CDN.
+
