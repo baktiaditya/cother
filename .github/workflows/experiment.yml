@@ -5,11 +5,9 @@ on:
 
 jobs:
   job1:
-    name: Debug
+    name: Cron Job 1
     runs-on: ubuntu-latest
 
     steps:
-    - name: Git checkout
-      uses: actions/checkout@v2
-    - name: List files
-      run: ls
+    - name: Run a one-line script
+      run: echo Hello, world!
