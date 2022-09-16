@@ -1,13 +1,16 @@
-name: Sitemap Cron Job
-
-on:
-  # Triggers the workflow every 5 minutes
+name: Experiment
+on: 
   schedule:
-    - cron: '*/5 * * * *'
+  - cron: '*/5 * * * *'
 
 jobs:
-  cron:
+  job1:
+    name: Debug
     runs-on: ubuntu-latest
+
     steps:
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: Git checkout
+      uses: actions/checkout@v2
+      with: { ref: debug }
+    - name: List files
+      run: ls
