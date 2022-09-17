@@ -1,13 +1,17 @@
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
 name: Experiment
 on: 
   schedule:
-  - cron: '*/5 * * * *'
+    # * is a special character in YAML so you have to quote this string.
+    # this will run once every 30 minutes
+    - cron: '*/30 * * * *'
 
 jobs:
-  job1:
-    name: Cron Job 1
+  pinger_job:
+    name: A Job To Ping
     runs-on: ubuntu-latest
-
     steps:
-    - name: Run a one-line script
-      run: echo Hello, world!
+      - name: cURL request 1
+        run: curl ${{ secrets.URL_1 }}
+      - name: cURL request 2
+        run: curl ${{ secrets.URL_2 }}
