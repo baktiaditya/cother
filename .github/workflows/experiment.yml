@@ -2,9 +2,9 @@
 name: Experiment
 on: 
   schedule:
-    # * is a special character in YAML so you have to quote this string.
-    # this will run once every 30 minutes
-    - cron: '*/30 * * * *'
+  # * is a special character in YAML so you have to quote this string.
+  # this will run once every 30 minutes
+  - cron: '*/30 * * * *'
 
 jobs:
   pinger_job:
